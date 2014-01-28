@@ -6,32 +6,39 @@ var requestAnimFrame = (function(callback) {
   };
 })();
 
-var systems = [];
-
 var canvas = document.getElementById('game');
 var context = canvas.getContext('2d');
 
-function frame() {
+var util = require("util");
+var events = require("events");
+
+function Parsecs() {
+  events.EventEmitter.call(this);
+}
+util.inherits(Parsecs, events.EventEmitter);
+
+Parsecs.prototype.run = function() {
   // clear
   context.clearRect(0, 0, canvas.width, canvas.height);
 
+  // update stuff
+  this.emit('update');
+
   // draw stuff
-  systems.map(function(system) {
-    system.tick();
-  });
+  this.emit('render');
 
   // request new frame
-  requestAnimFrame(frame);
-}
-
-module.exports = {
-  addSystem: function(system) {
-    systems.push(system);
-  },
-  run: function() {
-    frame();
-  },
-  getContext: function() {
-    return context;
-  }
+  requestAnimFrame(Parsecs.prototype.run.bind(this));
 };
+
+Parsecs.prototype.getContext = function() {
+  return context;
+};
+
+Parsecs.prototype.getEntities = function(filter) {
+  var me = this;
+  var keys = Object.keys(this.entities);
+  return keys.map(function(key) { return me.entities[key]; }).filter(filter); // TODO: Use lodash
+};
+
+module.exports = Parsecs;

@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var scripts = {
   page: 'index.html',
   main: 'scripts/game.js',
-  sources: ['scripts/*.js'],
+  sources: ['scripts/**/*.js'],
   tests: ['test/*.js']
 };
 
@@ -98,7 +98,7 @@ gulp.task('plato', function () {
 var lr = require('tiny-lr');
 var server = lr();
 
-gulp.task('gamedev-scripts', function() {
+gulp.task('dev-scripts', function() {
   var browserify = require('gulp-browserify');
   var concat = require('gulp-concat');
   var livereload = require('gulp-livereload');
@@ -110,14 +110,14 @@ gulp.task('gamedev-scripts', function() {
     .pipe(livereload(server));
 });
 
-gulp.task('gamedev', function() {
+gulp.task('dev', function() {
   var port = 35729;
   server.listen(port, function(err) {
     if(err) return console.log(err);
     console.log('Listening on localhost:%s', port);
     console.log('Include <script src="http://localhost:35729/livereload.js"></script> in your HTML');
 
-    gulp.watch([scripts.sources, scripts.page], ['gamedev-scripts']);
+    gulp.watch([scripts.sources, scripts.page], ['dev-scripts']);
   });
 });
 
