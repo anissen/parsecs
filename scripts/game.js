@@ -18,8 +18,8 @@ entities.push({
     },
     motion: {
         dx: 10,
-        dy: 4.5,
-        drotation: 0.001
+        dy: 7,
+        drotation: -0.05
     },
     trace: {
       traces: []
@@ -41,9 +41,11 @@ entities.push({
 
 var context = parsecs.getContext();
 
+var bounceSystem = new systems.BounceSystem();
+
 var updateFunc = function() {
   systems.MotionSystem.tick(context, entities);
-  systems.BounceSystem.tick(context, entities);
+  bounceSystem.tick(context, entities);
 };
 
 var renderFunc = function() {
@@ -51,11 +53,7 @@ var renderFunc = function() {
   systems.RenderSystem.tick(context, entities);
 };
 
-var colors = ["#7FDBFF", "#0074D9", "#001F3F", "#39CCCC", "#2ECC40", "#3D9970", "#01FF70", "#FFDC00", "#FF851B", "#FF4136", "#F012BE", "#B10DC9", "#85144B", "#dddddd", "#aaaaaa"];
-
-parsecs.on('update', updateFunc);
-parsecs.on('render', renderFunc);
-parsecs.on('mousedown', function(pos) {
+var createEntityAtPos = function(pos) {
   entities.push({
     sprite: {
       width: 50,
@@ -73,7 +71,16 @@ parsecs.on('mousedown', function(pos) {
       drotation: (-0.5 + Math.random()) * 0.1
     }
   });
-});
+};
+
+var colors = ["#7FDBFF", "#0074D9", "#001F3F", "#39CCCC", "#2ECC40", "#3D9970", "#01FF70", "#FFDC00", "#FF851B", "#FF4136", "#F012BE", "#B10DC9", "#85144B", "#dddddd", "#aaaaaa"];
+
+parsecs.on('update', updateFunc);
+parsecs.on('render', renderFunc);
+
+parsecs.on('mousedown', createEntityAtPos);
+
+bounceSystem.on('bounce', createEntityAtPos);
 
 parsecs.run();
 

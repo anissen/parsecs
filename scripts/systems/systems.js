@@ -1,4 +1,7 @@
 
+var util = require("util");
+var events = require("events");
+
 module.exports.MotionSystem = {
   tick: function(context, entities) {
     entities.filter(function(e) { return e.position && e.motion; }).forEach(function(entity) {
@@ -36,21 +39,37 @@ module.exports.RenderSystem = {
 
       context.rotate(entity.position.rotation);
 
+      context.strokeStyle = 'orange';
+      context.strokeWidth = 2;
       context.fillStyle = entity.sprite.color || 'rgba(255,0,0,0.5)';
-      context.fillRect(-entity.sprite.width / 2, -entity.sprite.height / 2, entity.sprite.width, entity.sprite.height);
+      context.beginPath();
+      context.rect(-entity.sprite.width / 2, -entity.sprite.height / 2, entity.sprite.width, entity.sprite.height);
+      context.closePath();
+      context.stroke();
+      context.fill();
       
       context.restore();
     });
   }
 };
 
-module.exports.BounceSystem = {
-  tick: function(context, entities) {
-    entities.filter(function(e) { return e.bounce && e.position && e.motion; }).forEach(function(entity) {
-      if (entity.position.x >= context.canvas.width)  entity.motion.dx *= -1;
-      if (entity.position.x <= 0)                     entity.motion.dx *= -1;
-      if (entity.position.y >= context.canvas.height) entity.motion.dy *= -1;
-      if (entity.position.y <= 0)                     entity.motion.dy *= -1;
-    });
-  }
+function BounceSystem() {
+  events.EventEmitter.call(this);
+}
+util.inherits(BounceSystem, events.EventEmitter);
+
+BounceSystem.prototype.tick = function(context, entities) {
+  var me = this;
+  entities.filter(function(e) { return e.bounce && e.position && e.motion; }).forEach(function(entity) {
+    if ((entity.position.x >= context.canvas.width) || (entity.position.x <= 0)) {
+      entity.motion.dx *= -1;
+      me.emit('bounce', { x: entity.position.x, y: entity.position.y });
+    }
+    if ((entity.position.y >= context.canvas.height) || (entity.position.y <= 0)) {
+      entity.motion.dy *= -1;
+      me.emit('bounce', { x: entity.position.x, y: entity.position.y });
+    }
+  });
 };
+
+module.exports.BounceSystem = BounceSystem;
