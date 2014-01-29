@@ -6,20 +6,22 @@ var requestAnimFrame = (function(callback) {
   };
 })();
 
-var canvas = document.getElementById('game');
-var context = canvas.getContext('2d');
-
 var util = require("util");
 var events = require("events");
 
 function Parsecs() {
   events.EventEmitter.call(this);
+
+  this.canvas = document.getElementById('game');
+  this.context = this.canvas.getContext('2d');
+
+  this.canvas.addEventListener("mousedown", this.mouseDownListener.bind(this), false);
 }
 util.inherits(Parsecs, events.EventEmitter);
 
 Parsecs.prototype.run = function() {
   // clear
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
   // update stuff
   this.emit('update');
@@ -32,7 +34,16 @@ Parsecs.prototype.run = function() {
 };
 
 Parsecs.prototype.getContext = function() {
-  return context;
+  return this.context;
+};
+
+Parsecs.prototype.mouseDownListener = function(evt) {
+  //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
+  var boundingRect = this.canvas.getBoundingClientRect();
+  var mouseX = (evt.clientX - boundingRect.left) * (this.canvas.width / boundingRect.width);
+  var mouseY = (evt.clientY - boundingRect.top) * (this.canvas.height / boundingRect.height);
+  evt.preventDefault();
+  this.emit('mousedown', { x: mouseX, y: mouseY });
 };
 
 module.exports = Parsecs;
