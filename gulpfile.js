@@ -61,7 +61,10 @@ gulp.task('dist', function() {
   var notify = require("gulp-notify");
   
   gulp.src(scripts.main) // sources
-    .pipe(browserify()) // { debug: true /* source maps */ }
+    .pipe(browserify({
+      //transform: ['es6ify']
+      //debug: true /* source maps */ }
+    }))
     .pipe(concat('index.js'))
     .pipe(rename('bundle.js'))
     .pipe(header('/* This is a header for ${name} version ${version}! */\n', { name: 'gulp test', version: '0.0.2' } ))
@@ -104,7 +107,11 @@ gulp.task('dev-scripts', function() {
   var livereload = require('gulp-livereload');
   
   gulp.src(scripts.main)
-    .pipe(browserify())
+    .pipe(browserify({
+      debug: true /*,
+      transform: ['es6ify']
+      */
+    }))
     .pipe(concat('index.js'))
     .pipe(gulp.dest(dist + 'dev'))
     .pipe(livereload(server));

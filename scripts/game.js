@@ -4,9 +4,9 @@ var systems = require('./systems/systems');
 
 var parsecs = new Parsecs();
 
-parsecs.entities = {};
+var entities = [];
 
-parsecs.entities['sdfaa aa'] = {
+entities.push({
     Sprite: {
         width: 100,
         height: 100
@@ -25,9 +25,9 @@ parsecs.entities['sdfaa aa'] = {
       traces: []
     },
     Bounce: {}
-};
+});
 
-parsecs.entities['sa dfji'] = {
+entities.push({
     Sprite: {
         width: 150,
         height: 80
@@ -37,17 +37,18 @@ parsecs.entities['sa dfji'] = {
         y: 250,
         rotation: -0.2
     }
-};
+});
 
+var context = parsecs.getContext();
 
 var updateFunc = function() {
-  systems.MotionSystem.tick(parsecs);
-  systems.BounceSystem.tick(parsecs);
+  systems.MotionSystem.tick(context, entities);
+  systems.BounceSystem.tick(context, entities);
 };
 
 var renderFunc = function() {
-  systems.TraceSystem.tick(parsecs);
-  systems.RenderSystem.tick(parsecs);
+  systems.TraceSystem.tick(context, entities);
+  systems.RenderSystem.tick(context, entities);
 };
 
 parsecs.on('update', updateFunc);
@@ -58,4 +59,3 @@ parsecs.run();
 // setTimeout(function() {
 //   parsecs.removeListener('update', updateFunc);
 // }, 2000);
-

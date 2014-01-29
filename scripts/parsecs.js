@@ -35,10 +35,4 @@ Parsecs.prototype.getContext = function() {
   return context;
 };
 
-Parsecs.prototype.getEntities = function(filter) {
-  var me = this;
-  var keys = Object.keys(this.entities);
-  return keys.map(function(key) { return me.entities[key]; }).filter(filter); // TODO: Use lodash
-};
-
 module.exports = Parsecs;
