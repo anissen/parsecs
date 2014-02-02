@@ -43,7 +43,12 @@ module.exports.RenderSystem = {
       context.strokeWidth = 2;
       context.fillStyle = entity.sprite.color || 'rgba(255,0,0,0.5)';
       context.beginPath();
-      context.rect(-entity.sprite.width / 2, -entity.sprite.height / 2, entity.sprite.width, entity.sprite.height);
+      if (entity.sprite.shape === 'circle') {
+	var radius = entity.sprite.radius;
+	context.arc(0, 0, radius, 0, 2 * Math.PI, false);
+      } else {
+	context.rect(-entity.sprite.width / 2, -entity.sprite.height / 2, entity.sprite.width, entity.sprite.height);
+      }
       context.closePath();
       context.stroke();
       context.fill();

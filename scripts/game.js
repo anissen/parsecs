@@ -8,8 +8,8 @@ var entities = [];
 
 entities.push({
     sprite: {
-        width: 100,
-        height: 100
+	shape: 'circle',
+	radius: 50
     },
     position: {
         x: 100,
@@ -17,9 +17,9 @@ entities.push({
         rotation: 0
     },
     motion: {
-        dx: 10,
-        dy: 7,
-        drotation: -0.05
+	dx: 4,
+	dy: 2.6,
+	drotation: -0.01
     },
     trace: {
       traces: []
@@ -30,7 +30,8 @@ entities.push({
 entities.push({
     sprite: {
         width: 150,
-        height: 80
+	height: 80,
+	shape: 'rect'
     },
     position: {
         x: 250,
@@ -56,8 +57,8 @@ var renderFunc = function() {
 var createEntityAtPos = function(pos) {
   entities.push({
     sprite: {
-      width: 50,
-      height: 50,
+      radius: 20,
+      shape: 'circle',
       color: colors[Math.floor(Math.random() * colors.length)]
     },
     position: {
