@@ -15,7 +15,7 @@ gulp.task('lint', function() {
   var jshintStylish = require('jshint-stylish');
   var jscs = require('gulp-jscs');
 
-  gulp.src(sources)
+  gulp.src(scripts.sources)
     .pipe(jshint())
     .pipe(jshint.reporter(jshintStylish))
     .pipe(jscs());
@@ -24,19 +24,18 @@ gulp.task('lint', function() {
 gulp.task('start_cover', function (cb) {
   var istanbul = require("gulp-istanbul");
 
-  gulp.src(sources)
+  gulp.src(scripts.sources)
     .pipe(istanbul())
     .on('end', cb);
 });
 
-/*
 // Run tests and output reports
 gulp.task('cover', function () {
   var mocha = require("gulp-mocha");
   var istanbul = require("gulp-istanbul");
 
-  gulp.runs('start_cover', function () {
-    gulp.src(testSources)
+  gulp.run('start_cover', function () {
+    gulp.src(scripts.test)
       .pipe(mocha()) // Run any unit test frameworks here
       .pipe(istanbul.writeReports());
   });
@@ -48,9 +47,9 @@ gulp.task('test', function () {
   gulp.src(scripts.tests)
     .pipe(mocha({ reporter: 'spec', growl: 'true' }));
 });
-*/
 
-gulp.task('dist', function() {
+
+gulp.task('build', function() {
   var browserify = require('gulp-browserify');
   var concat = require("gulp-concat");
   var header = require("gulp-header");
@@ -77,7 +76,7 @@ gulp.task('dist', function() {
     .pipe(header('/* This is a header for minified  ${name} version ${version}! */\n', { name: 'gulp test', version: '0.0.2' } ))
     .pipe(license('MIT', { tiny: true, organization: 'Anders Nissen' }))
     .pipe(gulp.dest(dist + 'bundle'))
-    .pipe(notify({ message: 'dist task completed' }));
+    .pipe(notify({ message: 'build task completed' }));
 });
 
 gulp.task('watch', function() {
@@ -134,6 +133,21 @@ gulp.task('bump', function() {
     .pipe(bump({ bump: 'patch' }))
     .pipe(gulp.dest('.'));
 });
+
+gulp.task('tag', function () {
+  var pkg = require('./package.json');
+  var v = 'v' + pkg.version;
+  var message = 'Release ' + v;
+
+  var git = require('gulp-git');
+  return gulp.src('./')
+    .pipe(git.commit(message))
+    .pipe(git.tag(v, message))
+    .pipe(git.push('origin', 'master', '--tags'))
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task('ci', ['lint', 'test', 'build']);
 
 // for sequential tasks: https://github.com/OverZealous/gulp-run-sequence
 // for an improved watch task use: https://github.com/floatdrop/gulp-watch
