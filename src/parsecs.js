@@ -12,6 +12,8 @@ var events = require("events");
 function Parsecs() {
   events.EventEmitter.call(this);
 
+  this.clearColor = null;
+  this.lastTime = 0;
   this.canvas = document.getElementById('game');
   this.context = this.canvas.getContext('2d');
 
@@ -19,18 +21,31 @@ function Parsecs() {
 }
 util.inherits(Parsecs, events.EventEmitter);
 
-Parsecs.prototype.run = function() {
+Parsecs.prototype.run = function(time) {
   // clear
-  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  if (this.clearColor) {
+    this.context.fillStyle = this.clearColor;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  } else {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  var deltaTime = time - this.lastTime;
 
   // update stuff
-  this.emit('update');
+  this.emit('update', deltaTime);
 
   // draw stuff
   this.emit('render');
 
   // request new frame
   requestAnimFrame(Parsecs.prototype.run.bind(this));
+
+  this.lastTime = time;
+};
+
+Parsecs.prototype.setClearColor = function(color) {
+  this.clearColor = color;
 };
 
 Parsecs.prototype.getContext = function() {

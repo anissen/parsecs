@@ -56,7 +56,7 @@ module.exports.RenderSystem = {
 
       context.rotate(entity.position.rotation);
 
-      context.strokeStyle = 'orange';
+      //context.strokeStyle = 'orange';
       context.strokeWidth = 2;
       context.fillStyle = entity.sprite.color || 'rgba(255,0,0,0.5)';
       context.beginPath();
@@ -67,7 +67,7 @@ module.exports.RenderSystem = {
         context.rect(-entity.sprite.width / 2, -entity.sprite.height / 2, entity.sprite.width, entity.sprite.height);
       }
       context.closePath();
-      context.stroke();
+      // context.stroke();
       context.fill();
       
       context.restore();
