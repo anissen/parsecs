@@ -3,8 +3,8 @@ var gulp = require('gulp');
 
 var scripts = {
   page: 'index.html',
-  main: 'scripts/game.js',
-  sources: ['scripts/**/*.js'],
+  main: 'src/game.js',
+  sources: ['src/**/*.js'],
   tests: ['test/*.js']
 };
 
@@ -21,6 +21,7 @@ gulp.task('lint', function() {
     .pipe(jscs());
 });
 
+/*
 gulp.task('start_cover', function (cb) {
   var istanbul = require("gulp-istanbul");
 
@@ -40,11 +41,12 @@ gulp.task('cover', function () {
       .pipe(istanbul.writeReports());
   });
 });
+*/
 
 gulp.task('test', function () {
   var mocha = require("gulp-mocha");
 
-  gulp.src(scripts.tests)
+  gulp.src(scripts.tests, { read: false })
     .pipe(mocha({ reporter: 'spec', growl: 'true' }));
 });
 
