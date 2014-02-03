@@ -9,7 +9,7 @@ var context = parsecs.getContext();
 var entities = [];
 
 function randomMonochromeColor() {
-  var value = Math.floor(Math.random()*100);
+  var value = Math.floor(Math.random() * 100);
   return 'rgba(' + value + ',' + value + ',' + value + ',1)';
 }
 
@@ -43,7 +43,6 @@ for (var i = 0; i < 100; i++) {
     }
   });
 }
-
 
 var updateFunc = function() {
 

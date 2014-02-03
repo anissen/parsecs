@@ -31,7 +31,6 @@ module.exports.TraceSystem = {
       context.stroke();
       context.closePath();
 
-
       for (var j = 0; j < entity.trace.traces.length; j++) {
         var trace = entity.trace.traces[j];
         context.save();
