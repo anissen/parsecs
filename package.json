@@ -1,6 +1,6 @@
 {
   "name": "parsecs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Experimental Entity-Component-System game engine",
   "repository": "https://github.com/anissen/parsecs.git",
   "dependencies": {},
@@ -27,7 +27,8 @@
     "tiny-lr": "~0.0.5",
     "gulp-mocha": "~0.4.1",
     "gulp-git": "~0.2.1",
-    "chai": "~1.9.0"
+    "chai": "~1.9.0",
+    "node-notifier": "~1.1.2-0"
   },
   "scripts": {
     "test": "gulp test"
