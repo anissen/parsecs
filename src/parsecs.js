@@ -52,6 +52,14 @@ Parsecs.prototype.getContext = function() {
   return this.context;
 };
 
+Parsecs.prototype.getHeight = function() {
+  return this.canvas.height;
+};
+
+Parsecs.prototype.getWidth = function() {
+  return this.canvas.width;
+};
+
 Parsecs.prototype.mouseDownListener = function(evt) {
   //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
   var boundingRect = this.canvas.getBoundingClientRect();

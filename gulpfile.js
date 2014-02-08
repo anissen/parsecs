@@ -8,6 +8,8 @@ var scripts = {
   tests: ['test/*.js']
 };
 
+var copyright = 'Anders Nissen';
+
 var dist = './dist/';
 
 gulp.task('lint', function() {
@@ -69,14 +71,14 @@ gulp.task('build', function() {
     .pipe(concat('index.js'))
     .pipe(rename('bundle.js'))
     .pipe(header('/* This is a header for ${name} version ${version}! */\n', { name: 'gulp test', version: '0.0.2' } ))
-    .pipe(license('MIT', { tiny: false, organization: 'Anders Nissen' }))
+    .pipe(license('MIT', { tiny: false, organization: copyright }))
     .pipe(gulp.dest(dist + 'bundle'))
     .pipe(rename('bundle.min.js'))
     .pipe(bytediff.start())
     .pipe(uglify())
     .pipe(bytediff.stop())
     .pipe(header('/* This is a header for minified  ${name} version ${version}! */\n', { name: 'gulp test', version: '0.0.2' } ))
-    .pipe(license('MIT', { tiny: true, organization: 'Anders Nissen' }))
+    .pipe(license('MIT', { tiny: true, organization: copyright }))
     .pipe(gulp.dest(dist + 'bundle'));
     //.pipe(notify({ message: 'build task completed' }));
 });
