@@ -12,6 +12,12 @@ module.exports.MotionSystem = {
   }
 };
 
+module.exports.ClickToZoomSystem = function(stage) {
+  stage.on('planet-selected', function(planet) {
+    stage.getCamera().zoomTo();
+  });
+};
+
 module.exports.TraceSystem = {
   tick: function(context, entities) {
     entities.filter(function(e) { return e.trace && e.position && e.motion; }).forEach(function(entity) {
@@ -48,6 +54,22 @@ module.exports.TraceSystem = {
 
 module.exports.RenderSystem = {
   tick: function(context, entities) {
+    var cameraEntity = entities.filter(function(e) { return e.camera && e.camera.active; })[0];
+    context.save();
+    var width = 1024;
+    var height = 800;
+
+    context.save();
+    context.scale(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
+    context.translate(cameraEntity.position.x, cameraEntity.position.y);
+
+    // context.translate(cameraEntity.camera.originX, cameraEntity.camera.originY);
+    // context.scale(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
+    // context.translate(cameraEntity.position.x, cameraEntity.position.y);
+
+    // context.scale(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
+    // context.translate(-cameraEntity.position.x + width / 2, -cameraEntity.position.y + height / 2);
+
     entities.filter(function(e) { return e.sprite && e.position; }).forEach(function(entity) {
       context.save();
 
@@ -55,22 +77,25 @@ module.exports.RenderSystem = {
 
       context.rotate(entity.position.rotation);
 
-      //context.strokeStyle = 'orange';
-      context.strokeWidth = 2;
+      context.strokeStyle = 'gray';
       context.fillStyle = entity.sprite.color || 'rgba(255,0,0,0.5)';
       context.beginPath();
       if (entity.sprite.shape === 'circle') {
         var radius = entity.sprite.radius;
         context.arc(0, 0, radius, 0, 2 * Math.PI, false);
       } else {
+        context.strokeStyle = 'black';
         context.rect(-entity.sprite.width / 2, -entity.sprite.height / 2, entity.sprite.width, entity.sprite.height);
       }
       context.closePath();
+      context.stroke();
       // context.stroke();
       context.fill();
       
       context.restore();
     });
+
+    context.restore();
   }
 };
 

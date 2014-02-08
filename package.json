@@ -27,7 +27,9 @@
     "tiny-lr": "~0.0.5",
     "gulp-mocha": "~0.4.1",
     "gulp-git": "~0.2.1",
-    "chai": "~1.9.0"
+    "chai": "~1.9.0",
+    "q": "~1.0.0",
+    "gulp-util": "~2.2.14"
   },
   "scripts": {
     "test": "gulp test"

@@ -108,13 +108,14 @@ gulp.task('dev-scripts', function() {
   var browserify = require('gulp-browserify');
   var concat = require('gulp-concat');
   var livereload = require('gulp-livereload');
+  var util = require('gulp-util');
   
   gulp.src(scripts.main)
     .pipe(browserify({
       debug: true /*,
       transform: ['es6ify']
       */
-    }))
+    })).on('error', util.log)
     .pipe(concat('index.js'))
     .pipe(gulp.dest(dist + 'dev'))
     .pipe(livereload(server));
