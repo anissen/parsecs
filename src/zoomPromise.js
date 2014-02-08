@@ -34,5 +34,3 @@ module.exports.Delay = function(time, progressInterval) {
 
   return d.promise;
 };
-
-

@@ -97,7 +97,8 @@ Parsecs.prototype.mouseMoveListener = function(evt) {
 function getNormalizedMouseWheelZoom(evt) {
   var d = evt.detail;
   var wheel = evt.wheelDelta;
-  var n = 225, n1 = n - 1;
+  var n = 225;
+  var n1 = n - 1;
   d = d ? wheel && (f = wheel / d) ? d / f : -d / 1.35 : wheel / 120;
   d = d < 1 ? d < -1 ? (-Math.pow(d, 2) - n1) / n : d : (Math.pow(d, 2) + n1) / n;
   return Math.min(Math.max(d / 2, -1), 1);
@@ -120,7 +121,6 @@ Parsecs.prototype.mouseDragListener = function(evt) {
   this.emit('mousedrag', { x: mousePos.x, y: mousePos.y, diffX: diff.x, diffY: diff.y });
   this.oldMousePos = mousePos;
 };
-
 
 Parsecs.Stage = require("./stage");
 

@@ -18,7 +18,6 @@ function randomMonochromeColor(min, max) {
 var width = parsecs.getWidth();
 var height = parsecs.getHeight();
 
-
 stage.width = width * 4;
 stage.height = height * 4;
 
@@ -206,9 +205,9 @@ function zoom(zf, px, py, min, max) {
     nz = max;
   }
 
-  var K = (z*z + z*zf); // putting some magic
-  var nx = x - ( (px*zf) / K ); 
-  var ny = y - ( (py*zf) / K);
+  var K = (z * z + z * zf); // putting some magic
+  var nx = x - ((px * zf) / K); 
+  var ny = y - ((py * zf) / K);
 
   cameraEntity.position.x = nx; // renew positions
   cameraEntity.position.y = ny;   
