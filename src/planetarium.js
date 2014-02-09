@@ -168,6 +168,29 @@ parsecs.on('render', renderFunc);
 
 parsecs.on('mousedown', function(pos) {
   //cameraEntity.camera.zoom += 0.1;
+
+  var zoomStart = cameraEntity.camera.zoom;
+  var zoomEnd = 5;
+  var intId = setInterval(function() {
+    var correctedZoom = zoom(0.1, pos.x, pos.y, 0.25, 10.0);
+    cameraEntity.position.x = correctedZoom.x;
+    cameraEntity.position.y = correctedZoom.y;
+    cameraEntity.camera.zoom = correctedZoom.zoom;
+    if (cameraEntity.camera.zoom >= zoomEnd)
+      clearInterval(intId);
+  }, 10);
+
+  /*
+  var correctedZoom1 = zoom(2, pos.x, pos.y, 0.25, 10.0);
+  var correctedZoom2 = zoom(4, pos.x, pos.y, 0.25, 10.0);
+
+  var tl = new TimelineLite();
+  tl
+    .to(cameraEntity.position, 5, { x: correctedZoom1.x, y: correctedZoom1.y })
+    .to(cameraEntity.camera, 5, { zoom: correctedZoom1.zoom }, '-=5')
+    .to(cameraEntity.position, 5, { x: correctedZoom2.x, y: correctedZoom2.y })
+    .to(cameraEntity.camera, 5, { zoom: correctedZoom2.zoom }, '-=5');
+  */
 });
 
 parsecs.on('mousemove', function(pos) {
@@ -209,14 +232,19 @@ function zoom(zf, px, py, min, max) {
   var nx = x - ((px * zf) / K); 
   var ny = y - ((py * zf) / K);
 
-  cameraEntity.position.x = nx; // renew positions
-  cameraEntity.position.y = ny;   
-  cameraEntity.camera.zoom = nz; // ... and zoom
+  return { x: nx, y: ny, zoom: nz };
+  // cameraEntity.position.x = nx; // renew positions
+  // cameraEntity.position.y = ny;   
+  // cameraEntity.camera.zoom = nz; // ... and zoom
 }
 
 parsecs.on('mousewheel', function(evt) {
   // console.log(evt.zoom);
-  zoom(evt.zoom, evt.x, evt.y, 0.25, 10.0);
+  var correctedEvt = zoom(evt.zoom / 4, evt.x, evt.y, 0.25, 10.0);
+  cameraEntity.position.x = correctedEvt.x; // renew positions
+  cameraEntity.position.y = correctedEvt.y;   
+  cameraEntity.camera.zoom = correctedEvt.zoom; // ... and zoom
+
   correctCameraBounds();
 });
 
@@ -248,3 +276,12 @@ delay(2000, 200)
     console.log('Done! Msg:', msg);
   });
 */
+
+
+// var Timeline = require('./../lib/greensock/uncompressed/TimelineLite');
+
+//var tl = new TimelineLite();
+// tl
+//   .to(planets[0].position, 10, { x: 1000 } )
+//   .to(planets[0].position, 10, { y: 500 })
+//   .to(planets[0].position, 10, { x: 0 });
