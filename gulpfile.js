@@ -152,7 +152,7 @@ gulp.task('tag', function () {
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('ci', ['lint', 'test', 'build']);
+gulp.task('ci', [/*'lint',*/ 'test', 'build']);
 
 // for sequential tasks: https://github.com/OverZealous/gulp-run-sequence
 // for an improved watch task use: https://github.com/floatdrop/gulp-watch

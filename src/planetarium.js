@@ -2,11 +2,11 @@
 var Parsecs = require('./parsecs');
 var systems = require('./systems/systems');
 
-var parsecs = new Parsecs();
+var parsecs = new Parsecs(800, 600, document.getElementById('game'));
 parsecs.setClearColor('white');
 var context = parsecs.getContext();
 
-var stage = new Parsecs.Stage();
+var world = new Parsecs.World();
 
 function randomMonochromeColor(min, max) {
   min = min || 0;
@@ -18,8 +18,8 @@ function randomMonochromeColor(min, max) {
 var width = parsecs.getWidth();
 var height = parsecs.getHeight();
 
-stage.width = width * 4;
-stage.height = height * 4;
+world.width = width * 4;
+world.height = height * 4;
 
 // Parameter Description
 // x0  The x-coordinate of the starting circle of the gradient
@@ -36,8 +36,8 @@ gradientFill.addColorStop(1, 'black');
 
 var cameraEntity = { 
   position: {
-    x: -stage.width / 2,
-    y: -stage.height / 2,
+    x: -world.width / 2,
+    y: -world.height / 2,
     rotation: 0
   },
   camera: {
@@ -53,9 +53,9 @@ var cameraEntity = {
     height: 50
   }
 };
-stage.entities.push(cameraEntity);
+world.entities.push(cameraEntity);
 
-stage.entities.push({
+world.entities.push({
   sprite: {
     shape: 'rect',
     color: 'pink',
@@ -69,7 +69,7 @@ stage.entities.push({
   }
 });
 
-stage.entities.push({
+world.entities.push({
   sprite: {
     shape: 'rect',
     color: 'red',
@@ -77,22 +77,22 @@ stage.entities.push({
     height: 100
   },
   position: {
-    x: stage.width - (100) / 2,
-    y: stage.height - (100) / 2,
+    x: world.width - (100) / 2,
+    y: world.height - (100) / 2,
     rotation: 0
   }
 });
 
 for (var i = 0; i < 500; i++) {
-  stage.entities.push({
+  world.entities.push({
     sprite: {
       shape: 'circle',
       color: randomMonochromeColor(230, 250),
       radius: 2 + Math.random() * 10
     },
     position: {
-      x: Math.random() * stage.width,
-      y: Math.random() * stage.height,
+      x: Math.random() * world.width,
+      y: Math.random() * world.height,
       rotation: 0
     }
   });
@@ -103,8 +103,8 @@ var planets = [];
 function getPlanetPosition(radius, minDist) {
   while (true) {
     var pos = {
-      x: minDist + radius + Math.random() * (stage.width - 2 * (minDist + radius)),
-      y: minDist + radius + Math.random() * (stage.height - 2 * (minDist + radius))
+      x: minDist + radius + Math.random() * (world.width - 2 * (minDist + radius)),
+      y: minDist + radius + Math.random() * (world.height - 2 * (minDist + radius))
     };
 
     if (planets.length === 0)
@@ -150,7 +150,7 @@ for (var i = 0; i < 20; i++) {
     clickToZoom: {}
   };
   planets.push(planet);
-  stage.entities.push(planet);
+  world.entities.push(planet);
 }
 
 var updateFunc = function() {
@@ -158,7 +158,7 @@ var updateFunc = function() {
 };
 
 var renderFunc = function() {
-  systems.RenderSystem.tick(context, stage.getEntities());
+  systems.RenderSystem.tick(context, world.getEntities());
 };
 
 var colors = ["#7FDBFF", "#0074D9", "#001F3F", "#39CCCC", "#2ECC40", "#3D9970", "#01FF70", "#FFDC00", "#FF851B", "#FF4136", "#F012BE", "#B10DC9", "#85144B", "#dddddd", "#aaaaaa"];
@@ -196,10 +196,10 @@ parsecs.on('mousedown', function(pos) {
 parsecs.on('mousemove', function(pos) {
   // console.log('mousemove', pos);
   // 0 -> width / 2   
-  // 1024 -> stage.width - width / 2
+  // 1024 -> world.width - width / 2
   //console.log(cameraEntity.position.x);
-  //cameraEntity.position.x = width / 2 + pos.x * ((stage.width - width) / width);
-  //cameraEntity.position.y = height / 2 + pos.y * ((stage.height - height) / height);
+  //cameraEntity.position.x = width / 2 + pos.x * ((world.width - width) / width);
+  //cameraEntity.position.y = height / 2 + pos.y * ((world.height - height) / height);
 
   /*
   var scale = cameraEntity.camera.zoom;
@@ -260,8 +260,8 @@ parsecs.on('mousedrag', function(evt) {
 });
 
 function correctCameraBounds() {
-  cameraEntity.position.x = clamp(cameraEntity.position.x, (-stage.width + width / cameraEntity.camera.zoom), 0);
-  cameraEntity.position.y = clamp(cameraEntity.position.y, (-stage.height + height / cameraEntity.camera.zoom), 0);
+  cameraEntity.position.x = clamp(cameraEntity.position.x, (-world.width + width / cameraEntity.camera.zoom), 0);
+  cameraEntity.position.y = clamp(cameraEntity.position.y, (-world.height + height / cameraEntity.camera.zoom), 0);
 }
 
 parsecs.run();
