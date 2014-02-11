@@ -2,7 +2,9 @@
 var Parsecs = require('./parsecs');
 var systems = require('./systems/systems');
 
-var parsecs = new Parsecs(800, 600, document.getElementById('game'));
+var width = 800;
+var height = 600;
+var parsecs = new Parsecs(width, height, document.getElementById('game'));
 parsecs.setClearColor('white');
 var context = parsecs.getContext();
 
@@ -14,9 +16,6 @@ function randomMonochromeColor(min, max) {
   var value = Math.floor(min + (max - min) * Math.random());
   return 'rgba(' + value + ',' + value + ',' + value + ',1)';
 }
-
-var width = parsecs.getWidth();
-var height = parsecs.getHeight();
 
 world.width = width * 4;
 world.height = height * 4;
@@ -157,8 +156,8 @@ var updateFunc = function() {
 
 };
 
-var renderFunc = function() {
-  systems.RenderSystem.tick(context, world.getEntities());
+var renderFunc = function(layer) {
+  systems.RenderSystem.tick(layer, world.getEntities());
 };
 
 var colors = ["#7FDBFF", "#0074D9", "#001F3F", "#39CCCC", "#2ECC40", "#3D9970", "#01FF70", "#FFDC00", "#FF851B", "#FF4136", "#F012BE", "#B10DC9", "#85144B", "#dddddd", "#aaaaaa"];

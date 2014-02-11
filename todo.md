@@ -31,7 +31,7 @@
 * Resource loader: ? (PxLoader?)
 * Physics: p2.js (?)
 * Touch input: hammer.js (?)
-* Keyboard input: keypress (?)
+* Keyboard input: keypress, https://github.com/ccampbell/mousetrap,  (?)
 * Fullscreen: screenfull.js (https://github.com/sindresorhus/screenfull.js)
 * Cross platform: Cocoon.js (?)
 * State manager: https://github.com/jakesgordon/javascript-state-machine (?)
@@ -40,6 +40,7 @@
 * Vibration?
 * GLSL transitions?
 * Offline
+* Stats: https://github.com/spite/rstats
 
 ## Stupid ideas
 * Behavior tree as an Entity-Component-System 

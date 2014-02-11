@@ -28,6 +28,7 @@ module.exports.TraceSystem = {
       }
       if (entity.trace.traces.length === 0) return;
       
+      /*
       context.beginPath();
       context.strokeStyle = 'pink';
       context.moveTo(entity.trace.traces[0].x, entity.trace.traces[0].y);
@@ -48,13 +49,15 @@ module.exports.TraceSystem = {
           context.fill();
         context.restore();
       }
+      */
     });
   }
 };
 
 module.exports.RenderSystem = {
-  tick: function(context, entities) {
+  tick: function(layer, entities) {
     var cameraEntity = entities.filter(function(e) { return e.camera && e.camera.active; })[0];
+    /*
     context.save();
     var width = 1024;
     var height = 800;
@@ -69,8 +72,21 @@ module.exports.RenderSystem = {
 
     // context.scale(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
     // context.translate(-cameraEntity.position.x + width / 2, -cameraEntity.position.y + height / 2);
-
+  */
     entities.filter(function(e) { return e.sprite && e.position; }).forEach(function(entity) {
+      // TODO: Render everything every frame
+
+      // draw a rectangel
+      layer.beginFill(0xFFFF0B, 0.5);
+      // layer.lineStyle(2, 0x0000FF, 1);
+      if (entity.sprite.shape === 'circle') {
+        layer.drawCircle(entity.position.x, entity.position.y, entity.sprite.radius);
+      } else {
+        layer.drawRect(entity.position.x - entity.sprite.width / 2, entity.position.y - entity.sprite.height / 2, entity.sprite.width, entity.sprite.height);
+      }
+      layer.endFill();
+
+      /*
       context.save();
 
       context.translate(entity.position.x, entity.position.y);
@@ -93,9 +109,10 @@ module.exports.RenderSystem = {
       context.fill();
       
       context.restore();
+      */
     });
 
-    context.restore();
+    // context.restore();
   }
 };
 
