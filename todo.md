@@ -35,13 +35,18 @@
 * Fullscreen: screenfull.js (https://github.com/sindresorhus/screenfull.js)
 * Cross platform: Cocoon.js (?)
 * State manager: https://github.com/jakesgordon/javascript-state-machine (?)
-* Storage: ?
+* Storage: https://github.com/mozilla/localForage ?
 * Network: Cloak (?), Primus (?)
 * Vibration?
 * GLSL transitions?
 * Offline
 * Stats: https://github.com/spite/rstats
+* Color manipulation library?
+    * https://github.com/bgrins/TinyColor ?
+    * https://github.com/mbjordan/Colors ?
+    * https://github.com/harthur/color ?
+    * https://github.com/gka/chroma.js ?
 
 ## Stupid ideas
 * Behavior tree as an Entity-Component-System 
-* Color manipulation library?
+

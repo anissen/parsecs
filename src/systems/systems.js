@@ -12,48 +12,6 @@ module.exports.MotionSystem = {
   }
 };
 
-module.exports.ClickToZoomSystem = function(stage) {
-  stage.on('planet-selected', function(planet) {
-    stage.getCamera().zoomTo();
-  });
-};
-
-module.exports.TraceSystem = {
-  tick: function(context, entities) {
-    entities.filter(function(e) { return e.trace && e.position && e.motion; }).forEach(function(entity) {
-      if (!entity.trace.traceTicks) entity.trace.traceTicks = 0;
-      if (++entity.trace.traceTicks % 2 === 0) {
-        entity.trace.traces.splice(0, entity.trace.traces.length - 100);
-        entity.trace.traces.push({ x: entity.position.x, y: entity.position.y });
-      }
-      if (entity.trace.traces.length === 0) return;
-      
-      /*
-      context.beginPath();
-      context.strokeStyle = 'pink';
-      context.moveTo(entity.trace.traces[0].x, entity.trace.traces[0].y);
-      for (var i = 1; i < entity.trace.traces.length; i++) {
-        context.lineTo(entity.trace.traces[i].x, entity.trace.traces[i].y);
-      }
-      context.stroke();
-      context.closePath();
-
-      for (var j = 0; j < entity.trace.traces.length; j++) {
-        var trace = entity.trace.traces[j];
-        context.save();
-          context.translate(trace.x, trace.y);
-          context.fillStyle = entity.sprite.color || 'rgba(255,0,0,0.5)';
-          context.beginPath();
-          context.arc(0, 0, j * (j % 10 ? 0.1 : 0.2), 0, 2 * Math.PI, false);
-          context.closePath();
-          context.fill();
-        context.restore();
-      }
-      */
-    });
-  }
-};
-
 module.exports.RenderSystem = {
   tick: function(layer, entities) {
     var cameraEntity = entities.filter(function(e) { return e.camera && e.camera.active; })[0];
@@ -77,7 +35,7 @@ module.exports.RenderSystem = {
       // TODO: Render everything every frame
 
       // draw a rectangel
-      layer.beginFill(0xFFFF0B, 0.5);
+      layer.beginFill(entity.sprite.color || '#FF0000', entity.sprite.alpha || 1);
       // layer.lineStyle(2, 0x0000FF, 1);
       if (entity.sprite.shape === 'circle') {
         layer.drawCircle(entity.position.x, entity.position.y, entity.sprite.radius);
@@ -116,23 +74,3 @@ module.exports.RenderSystem = {
   }
 };
 
-function BounceSystem() {
-  events.EventEmitter.call(this);
-}
-util.inherits(BounceSystem, events.EventEmitter);
-
-BounceSystem.prototype.tick = function(context, entities) {
-  var me = this;
-  entities.filter(function(e) { return e.bounce && e.position && e.motion; }).forEach(function(entity) {
-    if ((entity.position.x >= context.canvas.width) || (entity.position.x <= 0)) {
-      entity.motion.dx *= -1;
-      me.emit('bounce', { x: entity.position.x, y: entity.position.y });
-    }
-    if ((entity.position.y >= context.canvas.height) || (entity.position.y <= 0)) {
-      entity.motion.dy *= -1;
-      me.emit('bounce', { x: entity.position.x, y: entity.position.y });
-    }
-  });
-};
-
-module.exports.BounceSystem = BounceSystem;

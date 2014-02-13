@@ -86,7 +86,8 @@ for (var i = 0; i < 500; i++) {
   world.entities.push({
     sprite: {
       shape: 'circle',
-      color: randomMonochromeColor(230, 250),
+      color: 0x000000,
+      alpha: 0.1 + Math.random() * 0.4,
       radius: 2 + Math.random() * 10
     },
     position: {
