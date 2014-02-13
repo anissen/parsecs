@@ -12,7 +12,7 @@
     "gulp-imagemin": "~0.1.4",
     "gulp-istanbul": "~0.1.0",
     "gulp-jscs": "~0.3.0",
-    "gulp-jshint": "~1.4.2",
+    "gulp-jshint": "1.4.2",
     "gulp-license": "~0.2.0",
     "gulp-notify": "~0.4.0",
     "gulp-plato": "~0.1.1",

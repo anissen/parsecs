@@ -79,7 +79,7 @@ gulp.task('build', function() {
     .pipe(bytediff.stop())
     .pipe(header('/* This is a header for minified  ${name} version ${version}! */\n', { name: 'gulp test', version: '0.0.2' } ))
     .pipe(license('MIT', { tiny: true, organization: copyright }))
-    .pipe(gulp.dest(dist + 'bundle'));
+    .pipe(gulp.dest(dist + 'bundle'))
     .pipe(notify({ message: 'build task completed' }));
 });
 
