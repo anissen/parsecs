@@ -12,7 +12,6 @@ var events = require("events");
 function Parsecs(width, height, domElement) {
   events.EventEmitter.call(this);
 
-  this.clearColor = null;
   this.lastTime = 0;
   this.oldMousePos = { x: 0, y: 0 };
 
@@ -22,14 +21,6 @@ function Parsecs(width, height, domElement) {
   this.stage.setInteractive(true);
 
   this.renderer = PIXI.autoDetectRenderer(width, height, domElement, false, true);
-
-  // set the canvas width and height to fill the screen
-  //renderer.view.style.width = window.innerWidth + "px";
-  //renderer.view.style.height = window.innerHeight + "px";
-  // this.renderer.view.style.display = "block";
-
-  // add render view to DOM
-  // domElement.appendChild(this.renderer.view);
 
   /*
   this.canvas.addEventListener("mousedown", this.mouseDownListener.bind(this), false);
@@ -41,29 +32,35 @@ function Parsecs(width, height, domElement) {
   this.graphics = new PIXI.Graphics();
   this.stage.addChild(this.graphics);
 
+  /*
+  // PLAYING WITH FILTERS:
   var me = this;
   this.stage.click = this.stage.tap = function()
   {
-    me.graphics.lineStyle(Math.random() * 30, Math.random() * 0xFFFFFF, 1);
-    me.graphics.moveTo(Math.random() * 620,Math.random() * 380);
-    me.graphics.lineTo(Math.random() * 620,Math.random() * 380);
+    var tl = new TimelineLite();
+    tl
+      .to(me.pixelateFilter.uniforms.pixelSize.value, 2, { x: 20, y: 20 })
+      .to(me.pixelateFilter.uniforms.pixelSize.value, 2, { x: 1, y: 1 })
+      .to(me.blurFilter.blurXFilter.uniforms.blur, 1, { value: 0.005 })
+      .to(me.blurFilter.blurYFilter.uniforms.blur, 1, { value: 0.005 })
+      .to(me.blurFilter.blurXFilter.uniforms.blur, 1, { value: 0 })
+      .to(me.blurFilter.blurYFilter.uniforms.blur, 1, { value: 0 });
   };
 
-  //this.graphics.filters = [new PIXI.BlurFilter()];
-  //graphics.filters = [new PIXI.PixelateFilter()];
+  this.blurFilter = new PIXI.BlurFilter();
+  this.blurFilter.blurXFilter.uniforms.blur.value = 0;
+  this.blurFilter.blurYFilter.uniforms.blur.value = 0;
+
+  this.pixelateFilter = new PIXI.PixelateFilter();
+  this.pixelateFilter.uniforms.pixelSize.value.x = 1;
+  this.pixelateFilter.uniforms.pixelSize.value.y = 1;
+
+  this.graphics.filters = [this.pixelateFilter, this.blurFilter];
+  */
 }
 util.inherits(Parsecs, events.EventEmitter);
 
 Parsecs.prototype.run = function(time) {
-  // clear
-  /*
-  if (this.clearColor) {
-    this.context.fillStyle = this.clearColor;
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  } else {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
-  */
   if (!this.timeCount)
     this.timeCount = 0;
   this.timeCount += time / 100000;
@@ -73,8 +70,10 @@ Parsecs.prototype.run = function(time) {
   // update stuff
   this.emit('update', deltaTime);
 
-  // draw stuff
+  // clear
   this.graphics.clear();
+
+  // draw stuff
   this.emit('render', this.graphics);
   // this.graphics.tint = 'rgba(' + Math.round(Math.abs(Math.sin(this.timeCount)),2) + ',1,1,0.8)'; 
   // this.graphics.scale.x = 1.5 + Math.sin(this.timeCount);
