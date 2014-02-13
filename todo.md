@@ -22,6 +22,7 @@
 * Lightbox (Magnific-Popup?)
 * Fullscreen
 * Mobile?
+* Procedural sky rendering: https://github.com/wwwtyro/procedural.js
 
 ## Libraries:
 * Random: seed-random
