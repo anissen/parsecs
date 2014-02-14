@@ -61,8 +61,9 @@ gulp.task('build', function() {
   var rename = require("gulp-rename");
   var uglify = require("gulp-uglify");
   var license = require('gulp-license');
+  var gutil = require("gulp-util");
   var notify = require("gulp-notify");
-  
+
   gulp.src(scripts.main) // sources
     .pipe(browserify({
       //transform: ['es6ify']
@@ -80,7 +81,7 @@ gulp.task('build', function() {
     .pipe(header('/* This is a header for minified  ${name} version ${version}! */\n', { name: 'gulp test', version: '0.0.2' } ))
     .pipe(license('MIT', { tiny: true, organization: copyright }))
     .pipe(gulp.dest(dist + 'bundle'))
-    .pipe(notify({ message: 'build task completed' }));
+    .pipe(gutil.env.type === 'ci' ? gutil.noop() : notify({ message: 'build task completed' }));
 });
 
 gulp.task('watch', function() {
