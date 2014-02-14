@@ -14,7 +14,7 @@
     "gulp-jscs": "~0.3.0",
     "gulp-jshint": "1.4.2",
     "gulp-license": "~0.2.0",
-    "gulp-notify": "~0.4.0",
+    "gulp-notify": "~0.4.5",
     "gulp-plato": "~0.1.1",
     "gulp-rename": "~1.0.0",
     "gulp-size": "~0.1.2",
