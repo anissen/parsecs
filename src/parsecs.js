@@ -32,6 +32,26 @@ function Parsecs(width, height, domElement) {
   this.graphics = new PIXI.Graphics();
   this.stage.addChild(this.graphics);
 
+  this.stage.click = this.stage.tap = this.mouseDownListener.bind(this);
+  this.stage.mousewheel = this.mouseWheelListener.bind(this);
+
+  /*
+  var texture = PIXI.Texture.fromImage("assets/logo_small.png");
+  var interactionTest = new PIXI.Sprite(texture);
+  interactionTest.buttonMode = true;
+  // interactionTest.beginFill(0xFF0000, 1);
+  // interactionTest.drawRect(100, 100, 200, 200);
+  interactionTest.anchor.x = interactionTest.anchor.y = 0.5;
+  interactionTest.position.x = interactionTest.position.y = 150;
+  interactionTest.setInteractive(true);
+  interactionTest.mouseover = function() { console.log('mouseover'); };
+  interactionTest.mousewheel = function() { console.log("scrolled!"); };
+  // interactionTest.endFill();
+  this.stage.addChild(interactionTest);
+  */
+
+  //this.renderer.view.addEventListener("mousewheel", this.mouseWheelListener.bind(this), false);
+
   /*
   // PLAYING WITH FILTERS:
   var me = this;
@@ -95,27 +115,27 @@ Parsecs.prototype.getContext = function() {
 };
 
 Parsecs.prototype.getHeight = function() {
-  return this.stage.height;
+  return this.renderer.height;
 };
 
 Parsecs.prototype.getWidth = function() {
-  return this.stage.width;
+  return this.renderer.width;
 };
 
-Parsecs.prototype.getMousePos = function(evt) {
-  //getting mouse position correctly, being mindful of resizing that may have occured in the browser:
-  var boundingRect = this.canvas.getBoundingClientRect();
-  var mouseX = (evt.clientX - boundingRect.left) * (this.canvas.width / boundingRect.width);
-  var mouseY = (evt.clientY - boundingRect.top) * (this.canvas.height / boundingRect.height);
-  return { x: mouseX, y: mouseY };
+Parsecs.prototype.getStage = function() {
+  return this.stage;
 };
 
-Parsecs.prototype.mouseDownListener = function(evt) {
-  evt.preventDefault();
+Parsecs.prototype.getLayer = function() {
+  return this.graphics;
+};
+
+Parsecs.prototype.mouseDownListener = function(data) {
   this.mouseDown = true;
-  var mousePos = this.getMousePos(evt);
-  this.oldMousePos = mousePos;
-  this.emit('mousedown', mousePos);
+  //var mousePos = this.getMousePos(data);
+  //this.oldMousePos = mousePos;
+  var mousePos = data.getLocalPosition(this.stage);
+  this.emit('mousedown', { x: mousePos.x, y: mousePos.y });
 };
 
 Parsecs.prototype.mouseUpListener = function(evt) {
@@ -132,23 +152,34 @@ Parsecs.prototype.mouseMoveListener = function(evt) {
   }
 };
 
+/*
 function getNormalizedMouseWheelZoom(evt) {
-  var d = evt.detail;
-  var wheel = evt.wheelDelta;
-  var n = 225;
-  var n1 = n - 1;
-  d = d ? wheel && (f = wheel / d) ? d / f : -d / 1.35 : wheel / 120;
-  d = d < 1 ? d < -1 ? (-Math.pow(d, 2) - n1) / n : d : (Math.pow(d, 2) + n1) / n;
-  return Math.min(Math.max(d / 2, -1), 1);
-}
+  var scrollAmount;
+  if (evt.detail) {
+      var deltaDetail = evt.wheelDelta / evt.detail;
+      scrollAmount = (evt.wheelDelta && deltaDetail) ? (evt.detail / deltaDetail) : (-evt.detail / 1.35);
+  } else {
+      scrollAmount = evt.wheelDelta / 120;
+  }
 
-Parsecs.prototype.mouseWheelListener = function(evt) {
-  evt.preventDefault();
-  var mousePos = this.getMousePos(evt);
+  if (scrollAmount < 1) {
+      scrollAmount = (scrollAmount < -1) ? ((-Math.pow(scrollAmount, 2) - 224) / 225) : (scrollAmount);
+  } else {
+      scrollAmount = (Math.pow(scrollAmount, 2) + 224) / 225;
+  }
+
+  this.mouse.scrollAmount = Math.min(Math.max(scrollAmount / 2, -1), 1);
+}
+*/
+
+Parsecs.prototype.mouseWheelListener = function(data) {
+  data.originalEvent.preventDefault();
+  var mousePos = data.getLocalPosition(this.stage);
+  //console.log(data.scrollAmount);
   // var wheel = evt.wheelDelta / 120;//n or -n
   // var zoom = Math.pow(1 + Math.abs(wheel) / 2 , wheel > 0 ? 1 : -1);
 
-  this.emit('mousewheel', { x: mousePos.x, y: mousePos.y, zoom: getNormalizedMouseWheelZoom(evt) });
+  this.emit('mousewheel', { x: mousePos.x, y: mousePos.y, zoom: data.scrollAmount });
 };
 
 Parsecs.prototype.mouseDragListener = function(evt) {
