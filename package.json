@@ -28,8 +28,8 @@
     "gulp-mocha": "~0.4.1",
     "gulp-git": "~0.3.2",
     "chai": "~1.9.0",
-    "q": "~1.0.0",
-    "gulp-util": "~2.2.14"
+    "gulp-util": "~2.2.14",
+    "bluebird": "~1.0.5"
   },
   "scripts": {
     "test": "gulp test"

@@ -28,39 +28,7 @@ function randomMonochromeColorHex(min, max) {
 world.width = width * 4;
 world.height = height * 4;
 
-/*
-world.entities.push({
-  sprite: {
-    shape: 'rect',
-    color: 0x660066,
-    alpha: 0.1,
-    width: world.width,
-    height: world.height
-  },
-  position: {
-    x: world.width / 2,
-    y: world.height / 2,
-    rotation: 0
-  }
-});
-
-world.entities.push({
-  sprite: {
-    shape: 'rect',
-    color: 0x000066,
-    alpha: 0.25,
-    width: (world.width - 100),
-    height: (world.height - 100)
-  },
-  position: {
-    x: world.width / 2,
-    y: world.height / 2,
-    rotation: 0
-  }
-});
-*/
-
-for (var i = 0; i < 500; i++) {
+for (var i = 0; i < 700; i++) {
   world.entities.push({
     sprite: {
       shape: 'circle',
@@ -152,12 +120,15 @@ world.entities.push(cameraEntity);
 
 var updateFunc = function() {
   var layer = parsecs.getLayer();
+  
+  cameraEntity.camera.zoom = clamp(cameraEntity.camera.zoom, 0.3, 10);
+  layer.scale.set(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
+
   var clampedX = clamp(cameraEntity.position.x, (width / 2)  / cameraEntity.camera.zoom, world.width - (width / 2)  / cameraEntity.camera.zoom);
   var clampedY = clamp(cameraEntity.position.y, (height / 2)  / cameraEntity.camera.zoom, world.height - (height / 2)  / cameraEntity.camera.zoom);
   var cameraX = (-clampedX * cameraEntity.camera.zoom + width / 2);
   var cameraY = (-clampedY * cameraEntity.camera.zoom + height / 2);
   layer.position.set(cameraX, cameraY);
-  layer.scale.set(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
 };
 
 var renderFunc = function(layer) {
@@ -178,12 +149,12 @@ parsecs.on('mousedown', function(pos) {
   var tl = new TimelineLite();
   tl
     .to(cameraEntity.position, dist / 100, { x: posX, y: posY });
+    //.to(cameraEntity.camera, 10, { zoom: 2 }, '2');
 });
 
 parsecs.on('mousemove', function(pos) {
 
 });
-
 
 parsecs.on('mousewheel', function(evt) {
   cameraEntity.camera.zoom += evt.zoom;
@@ -200,7 +171,15 @@ parsecs.on('mousedrag', function(evt) {
 
 parsecs.run();
 
+// var tl = new TimelineLite();
+//   tl
+//     .to(cameraEntity.camera, 10, { zoom: 2 });
 
-var tl = new TimelineLite();
-  tl
-    .to(cameraEntity.camera, 10, { zoom: 2 });
+// var delay = require('./zoomPromise').Delay;
+// delay(2000, 200)
+//   .progressed(function(prog) { 
+//     console.log('Progress:', prog);
+//   })
+//   .then(function(msg) { 
+//     console.log('Done! Msg:', msg);
+//   });
