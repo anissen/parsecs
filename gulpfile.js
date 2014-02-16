@@ -5,7 +5,7 @@ var scripts = {
   page: 'index.html',
   main: 'src/planetarium.js',
   sources: ['src/**/*.js'],
-  tests: ['test/*.js']
+  tests: ['test/**/*.js']
 };
 
 var copyright = 'Anders Nissen';
@@ -23,27 +23,19 @@ gulp.task('lint', function() {
     .pipe(jscs());
 });
 
-/*
-gulp.task('start_cover', function (cb) {
-  var istanbul = require("gulp-istanbul");
+gulp.task('cover', function (cb) {
+  var istanbul = require('gulp-istanbul');
+  var mocha = require('gulp-mocha'); // Using mocha here, but any test framework will work
 
   gulp.src(scripts.sources)
-    .pipe(istanbul())
-    .on('end', cb);
+    .pipe(istanbul()) // Covering files
+    .on('end', function () {
+      gulp.src(scripts.tests)
+        .pipe(mocha())
+        .pipe(istanbul.writeReports()) // Creating the reports after tests runned
+        .on('end', cb);
+    });
 });
-
-// Run tests and output reports
-gulp.task('cover', function () {
-  var mocha = require("gulp-mocha");
-  var istanbul = require("gulp-istanbul");
-
-  gulp.run('start_cover', function () {
-    gulp.src(scripts.test)
-      .pipe(mocha()) // Run any unit test frameworks here
-      .pipe(istanbul.writeReports());
-  });
-});
-*/
 
 gulp.task('test', function () {
   var mocha = require("gulp-mocha");
