@@ -1,4 +1,7 @@
 
+## parsecs
+**P**retty **A**wesome & **R**eally **S**hiny **E**ntity-**C**omponent-**S**ystem Game Framework
+
 # TODO
 * Make an EntityRepository: https://github.com/jokeofweek/jsrogue/blob/master/assets/repository.js
 * Systems being able to listen and act on events: https://github.com/lmorchard/parsec-patrol/blob/7d2f01eae28d8c687fb4e97a556e0c4a05a87ef4/app/scripts/worlds.coffee#L38
@@ -8,11 +11,17 @@
 * FPS-meter
 * Pause/unpause
 * Make a gameloop.js (?)
+* Termonology:
+    - Entity -> Entity
+    - Component -> Attribute
+    - System -> System
+* Factory/repository methods for creating Entities w. Attributes
 * Use Promises for callbacks (e.g. Q, bluebird)
     - http://greweb.me/2014/01/promisify-your-games/
     - http://greweb.me/2013/07/deferred/
 * Steering? (http://gamedevelopment.tutsplus.com/series/understanding-steering-behaviors--gamedev-12732)
 * Promise-based behavior trees?
+* Rule/trigger-system (use for e.g. achievements, game logic, etc.)
 
 ## Planetarium libraries: (https://github.com/anissen/planetarium/blob/master/lib/planets/planetarium.coffee)
 * Random
@@ -47,6 +56,7 @@
     * https://github.com/mbjordan/Colors ?
     * https://github.com/harthur/color ?
     * https://github.com/gka/chroma.js ?
+* Analytics: ?
 
 ## Stupid ideas
 * Behavior tree as an Entity-Component-System 
