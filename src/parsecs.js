@@ -132,8 +132,6 @@ Parsecs.prototype.getLayer = function() {
 
 Parsecs.prototype.mouseDownListener = function(data) {
   this.mouseDown = true;
-  //var mousePos = this.getMousePos(data);
-  //this.oldMousePos = mousePos;
   var mousePos = data.getLocalPosition(this.stage);
   this.emit('mousedown', { x: mousePos.x, y: mousePos.y });
 };
@@ -175,10 +173,6 @@ function getNormalizedMouseWheelZoom(evt) {
 Parsecs.prototype.mouseWheelListener = function(data) {
   data.originalEvent.preventDefault();
   var mousePos = data.getLocalPosition(this.stage);
-  //console.log(data.scrollAmount);
-  // var wheel = evt.wheelDelta / 120;//n or -n
-  // var zoom = Math.pow(1 + Math.abs(wheel) / 2 , wheel > 0 ? 1 : -1);
-
   this.emit('mousewheel', { x: mousePos.x, y: mousePos.y, zoom: data.scrollAmount });
 };
 

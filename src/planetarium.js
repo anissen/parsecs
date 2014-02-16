@@ -28,10 +28,11 @@ function randomMonochromeColorHex(min, max) {
 world.width = width * 4;
 world.height = height * 4;
 
+/*
 world.entities.push({
   sprite: {
     shape: 'rect',
-    color: 0x000066,
+    color: 0x660066,
     alpha: 0.1,
     width: world.width,
     height: world.height
@@ -42,6 +43,22 @@ world.entities.push({
     rotation: 0
   }
 });
+
+world.entities.push({
+  sprite: {
+    shape: 'rect',
+    color: 0x000066,
+    alpha: 0.25,
+    width: (world.width - 100),
+    height: (world.height - 100)
+  },
+  position: {
+    x: world.width / 2,
+    y: world.height / 2,
+    rotation: 0
+  }
+});
+*/
 
 for (var i = 0; i < 500; i++) {
   world.entities.push({
@@ -106,8 +123,7 @@ for (var i = 0; i < 20; i++) {
       dx: 0,
       dy: 0,
       drotation: -0.01
-    },
-    clickToZoom: {}
+    }
   };
   planets.push(planet);
   world.entities.push(planet);
@@ -115,12 +131,12 @@ for (var i = 0; i < 20; i++) {
 
 var cameraEntity = { 
   position: {
-    x: 0, //world.width / 2,
-    y: 0, //world.height / 2,
+    x: world.width / 2,
+    y: world.height / 2,
     rotation: 0
   },
   camera: {
-    zoom: 1,
+    zoom: 0.3,
     originX: 0,
     originY: 0,
     active: true
@@ -129,15 +145,15 @@ var cameraEntity = {
     shape: 'circle',
     color: 0x0000FF,
     alpha: 1,
-    radius: 50
+    radius: 5
   }
 };
 world.entities.push(cameraEntity);
 
 var updateFunc = function() {
   var layer = parsecs.getLayer();
-  var clampedX = clamp(cameraEntity.position.x, width / 2, world.width - width / 2);
-  var clampedY = clamp(cameraEntity.position.y, height / 2, world.height - height / 2);
+  var clampedX = clamp(cameraEntity.position.x, (width / 2)  / cameraEntity.camera.zoom, world.width - (width / 2)  / cameraEntity.camera.zoom);
+  var clampedY = clamp(cameraEntity.position.y, (height / 2)  / cameraEntity.camera.zoom, world.height - (height / 2)  / cameraEntity.camera.zoom);
   var cameraX = (-clampedX * cameraEntity.camera.zoom + width / 2);
   var cameraY = (-clampedY * cameraEntity.camera.zoom + height / 2);
   layer.position.set(cameraX, cameraY);
@@ -152,76 +168,25 @@ parsecs.on('update', updateFunc);
 parsecs.on('render', renderFunc);
 
 parsecs.on('mousedown', function(pos) {
-  var posX = cameraEntity.position.x - (cameraEntity.position.x - pos.x); // TODO: Handle this in Parsecs::onMouseDown
-  var posY = cameraEntity.position.y - (cameraEntity.position.y - pos.y); // TODO: Handle this in Parsecs::onMouseDown
+  var clampedX = clamp(cameraEntity.position.x, (width / 2)  / cameraEntity.camera.zoom, world.width - (width / 2)  / cameraEntity.camera.zoom);
+  var clampedY = clamp(cameraEntity.position.y, (height / 2)  / cameraEntity.camera.zoom, world.height - (height / 2)  / cameraEntity.camera.zoom);
+  var posX = clampedX + (pos.x - width / 2) / cameraEntity.camera.zoom; // TODO: Handle this in Parsecs::onMouseDown
+  var posY = clampedY + (pos.y - height / 2) / cameraEntity.camera.zoom; // TODO: Handle this in Parsecs::onMouseDown
+
+  var dist = Math.sqrt(Math.pow(cameraEntity.position.x - posX, 2) + Math.pow(cameraEntity.position.y - posY, 2));
 
   var tl = new TimelineLite();
   tl
-    .to(cameraEntity.position, 2, { x: posX, y: posY });
+    .to(cameraEntity.position, dist / 100, { x: posX, y: posY });
 });
 
 parsecs.on('mousemove', function(pos) {
-  // console.log('mousemove', pos);
-  // 0 -> width / 2   
-  // 1024 -> world.width - width / 2
-  //console.log(cameraEntity.position.x);
-  //cameraEntity.position.x = width / 2 + pos.x * ((world.width - width) / width);
-  //cameraEntity.position.y = height / 2 + pos.y * ((world.height - height) / height);
 
-  /*
-  var scale = cameraEntity.camera.zoom;
-  var originX = cameraEntity.camera.originX;
-
-  cameraEntity.position.x = pos.x / scale + originX - pos.x / (scale * zoom);
-  */
 });
 
-/*
-function zoom(zf, px, py, min, max) {
-  // zf - is a zoom factor, which in my case was one of (0.1, -0.1)
-  // px, py coordinates - is point within canvas 
-  // eg. px = evt.clientX - canvas.offset().left
-  // py = evt.clientY - canvas.offset().top
-  var z = cameraEntity.camera.zoom;
-  var x = cameraEntity.position.x;
-  var y = cameraEntity.position.y;
-
-  var nz = z + zf; // getting new zoom
-  if (nz < min) {
-    zf -= (nz - min);
-    nz = min;
-  }
-  if (nz > max) {
-    zf += (max - nz);
-    nz = max;
-  }
-
-  var K = (z * z + z * zf); // putting some magic
-  var nx = x - ((px * zf) / K); 
-  var ny = y - ((py * zf) / K);
-
-  return { x: nx, y: ny, zoom: nz };
-}
-*/
 
 parsecs.on('mousewheel', function(evt) {
-  // console.log(evt.zoom);
-  // var layer = parsecs.getLayer();
-  //layer.scale.set(layer.scale.x + evt.zoom, layer.scale.y + evt.zoom);
-
-  //var correctedEvt = zoom(evt.zoom / 4, evt.x, evt.y, 0.25, 10.0);
-  //cameraEntity.position.x = clamp(correctedEvt.x, 0, world.width);
-  //cameraEntity.position.y = clamp(correctedEvt.y, 0, world.height);
-  cameraEntity.camera.zoom += evt.zoom;  
-
-  var layer = parsecs.getLayer();
-  // var viewX = cameraEntity.position.x;
-  // var viewY = cameraEntity.position.y;
-  layer.scale.set(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
-  //layer.position.set(-cameraEntity.position.x + width / 2, -cameraEntity.position.y + height / 2);
-  //console.log(layer.position);
-  //layer.position.set(correctedEvt.x - (layer.getBounds().width * correctedEvt.zoom) / 2, correctedEvt.y - (layer.getBounds().height * correctedEvt.zoom) / 2);
-  // console.log(layer.getBounds());
+  cameraEntity.camera.zoom += evt.zoom;
 });
 
 function clamp(value, min, max) {
@@ -231,32 +196,11 @@ function clamp(value, min, max) {
 parsecs.on('mousedrag', function(evt) {
   // cameraEntity.position.x += (evt.diffX / cameraEntity.camera.zoom);  // we want to move the point of cursor strictly
   // cameraEntity.position.y += (evt.diffY / cameraEntity.camera.zoom);
-  // correctCameraBounds();
 });
-
-function correctCameraBounds() {
-  // cameraEntity.position.x = clamp(cameraEntity.position.x, 0, world.width);
-  // cameraEntity.position.y = clamp(cameraEntity.position.y, 0, world.height);
-}
 
 parsecs.run();
 
-/*
-var delay = require('./zoomPromise').Delay;
-delay(2000, 200)
-  .progress(function(prog) { 
-    console.log('Progress:', prog);
-  })
-  .then(function(msg) { 
-    console.log('Done! Msg:', msg);
-  });
-*/
 
-// var tl = new TimelineLite();
-// tl
-//   .to(cameraEntity.position, 5, { x: world.width, y: 0 })
-//   .to(cameraEntity.position, 5, { x: world.width, y: world.height })
-//   .to(cameraEntity.position, 5, { x: 0, y: world.height })
-//   .to(cameraEntity.position, 5, { x: 0, y: 0 })
-//   .to(cameraEntity.position, 5, { x: planets[0].position.x, y: planets[0].position.y })
-//   .to(cameraEntity.camera, 5, { zoom: 5 });
+var tl = new TimelineLite();
+  tl
+    .to(cameraEntity.camera, 10, { zoom: 2 });
