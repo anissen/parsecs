@@ -15,7 +15,7 @@ describe('parsecs', function() {
 describe('Systems', function() {
   var systems = require('./../../src/systems/systems');
 
-  ['RenderSystem', 'MotionSystem'].forEach(function(system) {
+  ['RenderSystem', 'MotionSystem', 'EmitterSystem'].forEach(function(system) {
     describe(system, function() {
       it ('should be an object', function() {
         assert.isObject(systems[system]);
