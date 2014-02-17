@@ -1,5 +1,5 @@
 
-var Parsecs = require('./../src/parsecs');
+var Parsecs = require('./../src/core/parsecs');
 var systems = require('./../src/systems/systems');
 
 var width = 1024;
@@ -73,7 +73,6 @@ function getPlanetPosition(radius, minDist) {
 for (var i = 0; i < 20; i++) {
   var radius = 40 + Math.random() * 60; 
   var pos = getPlanetPosition(radius, 0);
-  // console.log(pos);
   var planet = {
     sprite: {
       shape: 'circle',
@@ -96,17 +95,11 @@ for (var i = 0; i < 20; i++) {
   world.entities.push(planet);
 }
 
-var cameraEntity = { 
+var shipEntity = { 
   position: {
     x: world.width / 2,
     y: world.height / 2,
     rotation: 0
-  },
-  camera: {
-    zoom: 1, //0.3,
-    originX: 0,
-    originY: 0,
-    active: true
   },
   sprite: {
     shape: 'circle',
@@ -115,7 +108,7 @@ var cameraEntity = {
     radius: 5
   }
 };
-world.entities.push(cameraEntity);
+world.entities.push(shipEntity);
 
 var cursorEntity = { 
   position: {
@@ -136,16 +129,11 @@ world.entities.push(cursorEntity);
 var camera = parsecs.getCamera();
 
 var updateFunc = function() {
-  var layer = parsecs.getLayer();
-
-  var zoom = camera.zoom;
-  //layer.scale.set(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
-
-  var clampedX = clamp(camera.x, (width / 2)  / zoom, world.width - (width / 2)  / zoom);
-  var clampedY = clamp(camera.y, (height / 2)  / zoom, world.height - (height / 2)  / zoom);
-  var cameraX = (-clampedX * zoom + width / 2);
-  var cameraY = (-clampedY * zoom + height / 2);
-  //layer.position.set(cameraX, cameraY);
+  // TODO: Move this logic to parsecs and/or camera
+  var clampedX = clamp(shipEntity.position.x, (width / 2)  / camera.zoom, world.width - (width / 2)  / camera.zoom);
+  var clampedY = clamp(shipEntity.position.y, (height / 2)  / camera.zoom, world.height - (height / 2)  / camera.zoom);
+  var cameraX = (-clampedX * camera.zoom + width / 2);
+  var cameraY = (-clampedY * camera.zoom + height / 2);
 
   camera.x = cameraX;
   camera.y = cameraY;
@@ -160,16 +148,11 @@ parsecs.on('render', renderFunc);
 
 parsecs.on('mousedown', function(pos) {
   var worldPos = parsecs.toWorldPosition(pos);
-  var dist = Math.sqrt(Math.pow(camera.x - worldPos.x, 2) + Math.pow(camera.y - worldPos.y, 2));
-
-  // var tl = new TimelineLite();
-  // tl
-  //   .to(camera, dist / 100, { x: worldPos.x, y: worldPos.y });
+  var dist = Math.sqrt(Math.pow(shipEntity.position.x - worldPos.x, 2) + Math.pow(shipEntity.position.y - worldPos.y, 2));
 
   var t2 = new TimelineLite();
   t2
-    .to(cameraEntity.position, dist / 100, { x: worldPos.x, y: worldPos.y });
-    //.to(cameraEntity.camera, 10, { zoom: 2 }, '2');
+    .to(shipEntity.position, dist / 100, { x: worldPos.x, y: worldPos.y });
 });
 
 parsecs.on('mousemove', function(pos) {
@@ -200,7 +183,6 @@ parsecs.on('mousemove', function(pos) {
 
 parsecs.on('mousewheel', function(evt) {
   camera.zoom = clamp(camera.zoom + evt.zoom, 0.3, 10);
-  console.log(camera.zoom);
 });
 
 function clamp(value, min, max) {
@@ -208,15 +190,19 @@ function clamp(value, min, max) {
 }
 
 parsecs.on('mousedrag', function(evt) {
-  // cameraEntity.position.x += (evt.diffX / cameraEntity.camera.zoom);  // we want to move the point of cursor strictly
-  // cameraEntity.position.y += (evt.diffY / cameraEntity.camera.zoom);
+
 });
 
 parsecs.run();
 
-// var tl = new TimelineLite();
-//   tl
-//     .to(cameraEntity.camera, 10, { zoom: 2 });
+/*
+function dot(prop, obj) { return obj[prop]; }
+var dotSprite = dot.bind(null, 'sprite');
+
+var tl = new TimelineLite();
+tl
+  .staggerFrom(planets.map(dotSprite), 2, { radius: 0, ease: Elastic.easeOut }, 0.1);
+*/
 
 // var delay = require('./zoomPromise').Delay;
 // delay(2000, 200)
