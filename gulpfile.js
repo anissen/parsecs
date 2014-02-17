@@ -3,8 +3,8 @@ var gulp = require('gulp');
 
 var scripts = {
   page: 'index.html',
-  main: 'src/planetarium.js',
-  sources: ['src/**/*.js'],
+  main: 'game/planetarium.js',
+  sources: ['src/**/*.js', 'game/**/*.js'],
   tests: ['test/**/*.js']
 };
 

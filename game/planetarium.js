@@ -1,6 +1,6 @@
 
-var Parsecs = require('./parsecs');
-var systems = require('./systems/systems');
+var Parsecs = require('./../src/parsecs');
+var systems = require('./../src/systems/systems');
 
 var width = 1024;
 var height = 768;
@@ -8,7 +8,7 @@ var parsecs = new Parsecs(width, height, document.getElementById('game'));
 parsecs.setClearColor('white');
 var context = parsecs.getContext();
 
-var world = new Parsecs.World();
+var world = parsecs.getWorld();
 
 function randomMonochromeColor(min, max) {
   min = min || 0;
@@ -25,8 +25,7 @@ function randomMonochromeColorHex(min, max) {
   return '#0x' + hexValue + hexValue + hexValue;
 }
 
-world.width = width * 4;
-world.height = height * 4;
+world.setSize(width * 4, height * 4);
 
 for (var i = 0; i < 700; i++) {
   world.entities.push({
@@ -104,7 +103,7 @@ var cameraEntity = {
     rotation: 0
   },
   camera: {
-    zoom: 0.3,
+    zoom: 1, //0.3,
     originX: 0,
     originY: 0,
     active: true
@@ -118,6 +117,22 @@ var cameraEntity = {
 };
 world.entities.push(cameraEntity);
 
+var cursorEntity = { 
+  position: {
+    x: world.width / 2,
+    y: world.height / 2,
+    rotation: 0
+  },
+  sprite: {
+    shape: 'rect',
+    color: 0x00FF33,
+    alpha: 1,
+    height: 25,
+    width: 25
+  }
+};
+world.entities.push(cursorEntity);
+
 var updateFunc = function() {
   var layer = parsecs.getLayer();
   
@@ -129,6 +144,9 @@ var updateFunc = function() {
   var cameraX = (-clampedX * cameraEntity.camera.zoom + width / 2);
   var cameraY = (-clampedY * cameraEntity.camera.zoom + height / 2);
   layer.position.set(cameraX, cameraY);
+
+  parsecs.getCamera().setPosition({ x: cameraX, y: cameraY });
+  parsecs.getCamera().setZoom(cameraEntity.camera.zoom);
 };
 
 var renderFunc = function(layer) {
@@ -153,11 +171,34 @@ parsecs.on('mousedown', function(pos) {
 });
 
 parsecs.on('mousemove', function(pos) {
+  var worldPos = parsecs.toWorldPosition(pos);
+  cursorEntity.position.x = worldPos.x;
+  cursorEntity.position.y = worldPos.y;
 
+  var planetMouseOver = null;
+  planets.forEach(function(planet) {
+    planet.sprite.highlight = false;
+
+    if (this.radius <= 0)
+        return;
+  
+    var insideCircle = Math.pow(worldPos.x - planet.position.x, 2) + Math.pow(worldPos.y - planet.position.y, 2) <= Math.pow(planet.sprite.radius, 2);
+    if (insideCircle) {
+      planetMouseOver = planet;
+    }
+  });
+
+  if (planetMouseOver) {
+    planetMouseOver.sprite.highlight = true;
+    var tl = new TimelineLite();
+    tl
+      .to(planetMouseOver.sprite, 1, { radius: planetMouseOver.sprite.radius * 1.5, ease: Elastic.easeInOut });
+  }
 });
 
 parsecs.on('mousewheel', function(evt) {
   cameraEntity.camera.zoom += evt.zoom;
+  console.log(cameraEntity.camera.zoom);
 });
 
 function clamp(value, min, max) {

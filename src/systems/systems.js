@@ -19,7 +19,7 @@ module.exports.RenderSystem = {
       // TODO: Render everything every frame
 
       // draw a rectangel
-      layer.beginFill(entity.sprite.color, entity.sprite.alpha);
+      layer.beginFill(entity.sprite.highlight ? 0xFF0000 : entity.sprite.color, entity.sprite.alpha);
       // layer.lineStyle(2, 0x0000FF, 1);
       if (entity.sprite.shape === 'circle') {
         layer.drawCircle(entity.position.x, entity.position.y, entity.sprite.radius);

@@ -28,12 +28,15 @@ function Parsecs(width, height, domElement) {
   this.canvas.addEventListener("mousemove", this.mouseMoveListener.bind(this), false);
   this.canvas.addEventListener("mousewheel", this.mouseWheelListener.bind(this), false);
   */
+  this.world = new Parsecs.World();
+  this.camera = new Parsecs.Camera();
 
   this.graphics = new PIXI.Graphics();
   this.stage.addChild(this.graphics);
 
   this.stage.click = this.stage.tap = this.mouseDownListener.bind(this);
   this.stage.mousewheel = this.mouseWheelListener.bind(this);
+  this.stage.mousemove = this.mouseMoveListener.bind(this);
 
   /*
   var texture = PIXI.Texture.fromImage("assets/logo_small.png");
@@ -130,6 +133,14 @@ Parsecs.prototype.getLayer = function() {
   return this.graphics;
 };
 
+Parsecs.prototype.getWorld = function() {
+  return this.world;
+};
+
+Parsecs.prototype.getCamera = function() {
+  return this.camera;
+};
+
 Parsecs.prototype.mouseDownListener = function(data) {
   this.mouseDown = true;
   var mousePos = data.getLocalPosition(this.stage);
@@ -137,18 +148,36 @@ Parsecs.prototype.mouseDownListener = function(data) {
 };
 
 Parsecs.prototype.mouseUpListener = function(evt) {
-  evt.preventDefault();
+  evt.originalEvent.preventDefault();
   this.mouseDown = false;
   this.emit('mouseup', this.getMousePos(evt));
 };
 
 Parsecs.prototype.mouseMoveListener = function(evt) {
-  evt.preventDefault();
-  this.emit('mousemove', this.getMousePos(evt));
+  evt.originalEvent.preventDefault();
+  this.emit('mousemove', evt.getLocalPosition(this.stage));
   if (this.mouseDown) {
     this.mouseDragListener(evt);
   }
 };
+
+Parsecs.prototype.toWorldPosition = function(mousePos) {
+  var width = this.getWidth();
+  var height = this.getHeight();
+  var cameraPos = this.camera.getPosition();
+  var cameraZoom = this.camera.getZoom();
+
+  var centerX = -cameraPos.x + (width / 2);
+  var centerY = -cameraPos.y + (height / 2);
+  var posX = centerX + (mousePos.x - width / 2);
+  var posY = centerY + (mousePos.y - height / 2);
+
+  return { x: posX / cameraZoom, y: posY / cameraZoom };
+};
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(min, value), max);
+}
 
 /*
 function getNormalizedMouseWheelZoom(evt) {
@@ -177,15 +206,18 @@ Parsecs.prototype.mouseWheelListener = function(data) {
 };
 
 Parsecs.prototype.mouseDragListener = function(evt) {
+  /*
   evt.preventDefault();
   var mousePos = this.getMousePos(evt);
   var diff = { x: mousePos.x - this.oldMousePos.x, y: mousePos.y - this.oldMousePos.y };
 
   this.emit('mousedrag', { x: mousePos.x, y: mousePos.y, diffX: diff.x, diffY: diff.y });
   this.oldMousePos = mousePos;
+  */
 };
 
-Parsecs.World = require("./world");
+Parsecs.World = require("./core/world");
+Parsecs.Camera = require("./core/camera");
 
 module.exports = Parsecs;
   
