@@ -20,7 +20,7 @@
     - http://greweb.me/2014/01/promisify-your-games/
     - http://greweb.me/2013/07/deferred/
 * Steering? (http://gamedevelopment.tutsplus.com/series/understanding-steering-behaviors--gamedev-12732)
-* Promise-based behavior trees?
+* Promise-based behavior trees? (ref. http://takinginitiative.wordpress.com/2014/02/17/synchronized-behavior-trees/ ?)
 * Rule/trigger-system (use for e.g. achievements, game logic, etc.)
 
 ## Planetarium libraries: (https://github.com/anissen/planetarium/blob/master/lib/planets/planetarium.coffee)

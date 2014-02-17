@@ -133,20 +133,22 @@ var cursorEntity = {
 };
 world.entities.push(cursorEntity);
 
+var camera = parsecs.getCamera();
+
 var updateFunc = function() {
   var layer = parsecs.getLayer();
-  
-  cameraEntity.camera.zoom = clamp(cameraEntity.camera.zoom, 0.3, 10);
-  layer.scale.set(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
 
-  var clampedX = clamp(cameraEntity.position.x, (width / 2)  / cameraEntity.camera.zoom, world.width - (width / 2)  / cameraEntity.camera.zoom);
-  var clampedY = clamp(cameraEntity.position.y, (height / 2)  / cameraEntity.camera.zoom, world.height - (height / 2)  / cameraEntity.camera.zoom);
-  var cameraX = (-clampedX * cameraEntity.camera.zoom + width / 2);
-  var cameraY = (-clampedY * cameraEntity.camera.zoom + height / 2);
-  layer.position.set(cameraX, cameraY);
+  var zoom = camera.zoom;
+  //layer.scale.set(cameraEntity.camera.zoom, cameraEntity.camera.zoom);
 
-  parsecs.getCamera().setPosition({ x: cameraX, y: cameraY });
-  parsecs.getCamera().setZoom(cameraEntity.camera.zoom);
+  var clampedX = clamp(camera.x, (width / 2)  / zoom, world.width - (width / 2)  / zoom);
+  var clampedY = clamp(camera.y, (height / 2)  / zoom, world.height - (height / 2)  / zoom);
+  var cameraX = (-clampedX * zoom + width / 2);
+  var cameraY = (-clampedY * zoom + height / 2);
+  //layer.position.set(cameraX, cameraY);
+
+  camera.x = cameraX;
+  camera.y = cameraY;
 };
 
 var renderFunc = function(layer) {
@@ -157,16 +159,16 @@ parsecs.on('update', updateFunc);
 parsecs.on('render', renderFunc);
 
 parsecs.on('mousedown', function(pos) {
-  var clampedX = clamp(cameraEntity.position.x, (width / 2)  / cameraEntity.camera.zoom, world.width - (width / 2)  / cameraEntity.camera.zoom);
-  var clampedY = clamp(cameraEntity.position.y, (height / 2)  / cameraEntity.camera.zoom, world.height - (height / 2)  / cameraEntity.camera.zoom);
-  var posX = clampedX + (pos.x - width / 2) / cameraEntity.camera.zoom; // TODO: Handle this in Parsecs::onMouseDown
-  var posY = clampedY + (pos.y - height / 2) / cameraEntity.camera.zoom; // TODO: Handle this in Parsecs::onMouseDown
+  var worldPos = parsecs.toWorldPosition(pos);
+  var dist = Math.sqrt(Math.pow(camera.x - worldPos.x, 2) + Math.pow(camera.y - worldPos.y, 2));
 
-  var dist = Math.sqrt(Math.pow(cameraEntity.position.x - posX, 2) + Math.pow(cameraEntity.position.y - posY, 2));
+  // var tl = new TimelineLite();
+  // tl
+  //   .to(camera, dist / 100, { x: worldPos.x, y: worldPos.y });
 
-  var tl = new TimelineLite();
-  tl
-    .to(cameraEntity.position, dist / 100, { x: posX, y: posY });
+  var t2 = new TimelineLite();
+  t2
+    .to(cameraEntity.position, dist / 100, { x: worldPos.x, y: worldPos.y });
     //.to(cameraEntity.camera, 10, { zoom: 2 }, '2');
 });
 
@@ -197,8 +199,8 @@ parsecs.on('mousemove', function(pos) {
 });
 
 parsecs.on('mousewheel', function(evt) {
-  cameraEntity.camera.zoom += evt.zoom;
-  console.log(cameraEntity.camera.zoom);
+  camera.zoom = clamp(camera.zoom + evt.zoom, 0.3, 10);
+  console.log(camera.zoom);
 });
 
 function clamp(value, min, max) {

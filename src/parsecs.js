@@ -93,6 +93,9 @@ Parsecs.prototype.run = function(time) {
   // update stuff
   this.emit('update', deltaTime);
 
+  this.graphics.scale.set(this.camera.zoom, this.camera.zoom);
+  this.graphics.position.set(this.camera.x, this.camera.y);
+
   // clear
   this.graphics.clear();
 
@@ -164,15 +167,13 @@ Parsecs.prototype.mouseMoveListener = function(evt) {
 Parsecs.prototype.toWorldPosition = function(mousePos) {
   var width = this.getWidth();
   var height = this.getHeight();
-  var cameraPos = this.camera.getPosition();
-  var cameraZoom = this.camera.getZoom();
 
-  var centerX = -cameraPos.x + (width / 2);
-  var centerY = -cameraPos.y + (height / 2);
+  var centerX = -this.camera.x + (width / 2);
+  var centerY = -this.camera.y + (height / 2);
   var posX = centerX + (mousePos.x - width / 2);
   var posY = centerY + (mousePos.y - height / 2);
 
-  return { x: posX / cameraZoom, y: posY / cameraZoom };
+  return { x: posX / this.camera.zoom, y: posY / this.camera.zoom };
 };
 
 function clamp(value, min, max) {
