@@ -217,8 +217,8 @@ Parsecs.prototype.mouseDragListener = function(evt) {
   */
 };
 
-Parsecs.World = require("./core/world");
-Parsecs.Camera = require("./core/camera");
+Parsecs.World = require("./world");
+Parsecs.Camera = require("./camera");
 
 module.exports = Parsecs;
   
