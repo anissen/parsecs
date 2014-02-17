@@ -29,16 +29,15 @@ world.setSize(width * 4, height * 4);
 
 for (var i = 0; i < 700; i++) {
   world.entities.push({
-    sprite: {
-      shape: 'circle',
-      color: 0x000000,
-      alpha: 0.1 + Math.random() * 0.4,
-      radius: 2 + Math.random() * 10
-    },
     position: {
       x: Math.random() * world.width,
       y: Math.random() * world.height,
       rotation: 0
+    },
+    circle: {
+      color: 0x000000,
+      alpha: 0.1 + Math.random() * 0.4,
+      radius: 2 + Math.random() * 10
     }
   });
 }
@@ -59,7 +58,7 @@ function getPlanetPosition(radius, minDist) {
     for (var i = 0; i < planets.length; i++) {
       var planet = planets[i];
       var dist = Math.sqrt(Math.pow(pos.x - planet.position.x, 2) + Math.pow(pos.y - planet.position.y, 2));
-      var planetRadius = planet.sprite.radius;
+      var planetRadius = planet.circle.radius;
       if (dist - (planetRadius + radius) < minDist) {
         validPos = false;
         break;
@@ -74,16 +73,15 @@ for (var i = 0; i < 20; i++) {
   var radius = 40 + Math.random() * 60; 
   var pos = getPlanetPosition(radius, 0);
   var planet = {
-    sprite: {
-      shape: 'circle',
-      color: 0x000000,
-      alpha: 1,
-      radius: radius
-    },
     position: {
       x: pos.x,
       y: pos.y,
       rotation: 0
+    },
+    circle: {
+      color: 0x000000,
+      alpha: 1,
+      radius: radius
     },
     motion: {
       dx: 0,
@@ -101,8 +99,7 @@ var shipEntity = {
     y: world.height / 2,
     rotation: 0
   },
-  sprite: {
-    shape: 'circle',
+  circle: {
     color: 0x0000FF,
     alpha: 1,
     radius: 5
@@ -116,8 +113,7 @@ var cursorEntity = {
     y: world.height / 2,
     rotation: 0
   },
-  sprite: {
-    shape: 'rect',
+  rectangle: {
     color: 0x00FF33,
     alpha: 1,
     height: 25,
@@ -162,22 +158,22 @@ parsecs.on('mousemove', function(pos) {
 
   var planetMouseOver = null;
   planets.forEach(function(planet) {
-    planet.sprite.highlight = false;
+    planet.circle.highlight = false;
 
     if (this.radius <= 0)
         return;
   
-    var insideCircle = Math.pow(worldPos.x - planet.position.x, 2) + Math.pow(worldPos.y - planet.position.y, 2) <= Math.pow(planet.sprite.radius, 2);
+    var insideCircle = Math.pow(worldPos.x - planet.position.x, 2) + Math.pow(worldPos.y - planet.position.y, 2) <= Math.pow(planet.circle.radius, 2);
     if (insideCircle) {
       planetMouseOver = planet;
     }
   });
 
   if (planetMouseOver) {
-    planetMouseOver.sprite.highlight = true;
+    planetMouseOver.circle.highlight = true;
     var tl = new TimelineLite();
     tl
-      .to(planetMouseOver.sprite, 1, { radius: planetMouseOver.sprite.radius * 1.5, ease: Elastic.easeInOut });
+      .to(planetMouseOver.circle, 1, { radius: planetMouseOver.circle.radius * 1.5, ease: Elastic.easeInOut });
   }
 });
 
@@ -197,11 +193,11 @@ parsecs.run();
 
 /*
 function dot(prop, obj) { return obj[prop]; }
-var dotSprite = dot.bind(null, 'sprite');
+var dotCircle = dot.bind(null, 'circle');
 
 var tl = new TimelineLite();
 tl
-  .staggerFrom(planets.map(dotSprite), 2, { radius: 0, ease: Elastic.easeOut }, 0.1);
+  .staggerFrom(planets.map(dotCircle), 2, { radius: 0, ease: Elastic.easeOut }, 0.1);
 */
 
 // var delay = require('./zoomPromise').Delay;
