@@ -93,17 +93,42 @@ for (var i = 0; i < 20; i++) {
   world.entities.push(planet);
 }
 
+var shipGraphics = new PIXI.Graphics();
+shipGraphics.beginFill(0x2244CC, 1);
+  shipGraphics.lineStyle(1, 0x4422CC, 1);
+
+  // draw a second shape
+  shipGraphics.moveTo(0, -15);
+  shipGraphics.lineTo(10, 15);
+  shipGraphics.lineTo(-10, 15);
+  shipGraphics.lineTo(0, -15);
+shipGraphics.endFill();
+
+parsecs.getLayer().addChild(shipGraphics);
+
 var shipEntity = { 
   position: {
     x: world.width / 2,
     y: world.height / 2,
     rotation: 0
   },
-  circle: {
+  // motion: {
+  //   dx: 0,
+  //   dy: 0,
+  //   drotation: 0.001
+  // },
+  ship: {
+    graphics: shipGraphics,
     color: 0x0000FF,
     alpha: 1,
-    radius: 5
-  }
+    radius: 20
+  }/*,
+  emitter: {
+    delay: 100,
+    countDown: 100,
+    particleLife: 2,
+    particles: []
+  }*/
 };
 world.entities.push(shipEntity);
 
@@ -124,7 +149,10 @@ world.entities.push(cursorEntity);
 
 var camera = parsecs.getCamera();
 
-var updateFunc = function() {
+var updateFunc = function(deltaTime) {
+  systems.MotionSystem.tick(world.getEntities(), deltaTime);
+  systems.EmitterSystem.tick(world.getEntities(), deltaTime);
+
   // TODO: Move this logic to parsecs and/or camera
   var clampedX = clamp(shipEntity.position.x, (width / 2)  / camera.zoom, world.width - (width / 2)  / camera.zoom);
   var clampedY = clamp(shipEntity.position.y, (height / 2)  / camera.zoom, world.height - (height / 2)  / camera.zoom);

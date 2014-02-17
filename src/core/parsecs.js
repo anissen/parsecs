@@ -13,6 +13,7 @@ function Parsecs(width, height, domElement) {
   events.EventEmitter.call(this);
 
   this.lastTime = 0;
+  this.timeCount = 0;
   this.oldMousePos = { x: 0, y: 0 };
 
   // create an new instance of a pixi stage
@@ -84,27 +85,27 @@ function Parsecs(width, height, domElement) {
 util.inherits(Parsecs, events.EventEmitter);
 
 Parsecs.prototype.run = function(time) {
-  if (!this.timeCount)
-    this.timeCount = 0;
   this.timeCount += time / 100000;
 
   var deltaTime = time - this.lastTime;
 
-  // update stuff
-  this.emit('update', deltaTime);
+  if (!isNaN(deltaTime)) {
+    // update stuff
+    this.emit('update', deltaTime);
 
-  this.graphics.scale.set(this.camera.zoom, this.camera.zoom);
-  this.graphics.position.set(this.camera.x, this.camera.y);
+    this.graphics.scale.set(this.camera.zoom, this.camera.zoom);
+    this.graphics.position.set(this.camera.x, this.camera.y);
 
-  // clear
-  this.graphics.clear();
+    // clear
+    this.graphics.clear();
 
-  // draw stuff
-  this.emit('render', this.graphics);
-  // this.graphics.tint = 'rgba(' + Math.round(Math.abs(Math.sin(this.timeCount)),2) + ',1,1,0.8)'; 
-  // this.graphics.scale.x = 1.5 + Math.sin(this.timeCount);
-  // this.graphics.scale.y = 1.5 + Math.sin(this.timeCount);
-  this.renderer.render(this.stage);
+    // draw stuff
+    this.emit('render', this.graphics);
+    // this.graphics.tint = 'rgba(' + Math.round(Math.abs(Math.sin(this.timeCount)),2) + ',1,1,0.8)'; 
+    // this.graphics.scale.x = 1.5 + Math.sin(this.timeCount);
+    // this.graphics.scale.y = 1.5 + Math.sin(this.timeCount);
+    this.renderer.render(this.stage);
+  }
 
   // request new frame
   requestAnimFrame(Parsecs.prototype.run.bind(this));
