@@ -19,7 +19,7 @@ function Parsecs(width, height, domElement) {
   // create an new instance of a pixi stage
   this.stage = new PIXI.Stage(0xFFFFFF);
 
-  this.stage.setInteractive(true);
+  // this.stage.setInteractive(true);
 
   this.renderer = PIXI.autoDetectRenderer(width, height, domElement, false, true);
 
@@ -32,10 +32,22 @@ function Parsecs(width, height, domElement) {
   this.world = new Parsecs.World();
   this.camera = new Parsecs.Camera();
 
-  this.graphics = new PIXI.Graphics();
-  this.stage.addChild(this.graphics);
+  this.superLayer = new PIXI.DisplayObjectContainer();
+  this.stage.addChild(this.superLayer);
 
-  this.stage.click = this.stage.tap = this.mouseDownListener.bind(this);
+  this.graphics = new PIXI.Graphics();
+  this.superLayer.addChild(this.graphics);
+
+  this.backgroundLayer = new PIXI.Graphics();
+  this.backgroundLayer.setInteractive(true);
+  this.backgroundLayer.hitArea = new PIXI.Rectangle(0, 0, 1000000, 1000000);
+  this.superLayer.addChild(this.backgroundLayer);
+
+  this.layer = new PIXI.DisplayObjectContainer();
+  this.layer.setInteractive(true);
+  this.superLayer.addChild(this.layer);
+
+  this.backgroundLayer.click = this.backgroundLayer.tap = this.mouseDownListener.bind(this);
   this.stage.mousewheel = this.mouseWheelListener.bind(this);
   this.stage.mousemove = this.mouseMoveListener.bind(this);
 
@@ -108,8 +120,8 @@ Parsecs.prototype.run = function(time) {
     // update stuff
     this.emit('update', deltaTime);
 
-    this.graphics.scale.set(this.camera.zoom, this.camera.zoom);
-    this.graphics.position.set(this.camera.x, this.camera.y);
+    this.superLayer.scale.set(this.camera.zoom, this.camera.zoom);
+    this.superLayer.position.set(this.camera.x, this.camera.y);
 
     // clear
     this.graphics.clear();
@@ -148,8 +160,12 @@ Parsecs.prototype.getStage = function() {
   return this.stage;
 };
 
-Parsecs.prototype.getLayer = function() {
+Parsecs.prototype.getGraphics = function() {
   return this.graphics;
+};
+
+Parsecs.prototype.getLayer = function() {
+  return this.layer;
 };
 
 Parsecs.prototype.getWorld = function() {
