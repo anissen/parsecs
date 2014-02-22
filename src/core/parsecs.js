@@ -35,6 +35,42 @@ function Parsecs(width, height, domElement) {
   this.graphics = new PIXI.Graphics();
   this.stage.addChild(this.graphics);
 
+  this.tempCanvas = {};
+  this.tempCanvas = document.createElement('canvas');
+
+  var context = this.getNewContext(256, 256);
+  // context.strokeStyle = "#000000";
+  context.fillStyle = '#000000';
+  /*
+  context.beginPath();
+
+  context.arc(128, 128, 128, 0, 2 * Math.PI);
+  context.fill();
+  for (var i = 0; i < 100; i++) {
+    context.beginPath();
+    context.arc(Math.random() * 256, Math.random() * 256, 5, 0, 2 * Math.PI);
+    context.fill();
+  }
+  */
+  var bumpiness = 5;
+  context.beginPath();
+  for (var i = 0; i < (2 * Math.PI); i += 0.2) {
+    if (i === 0)
+      context.moveTo(128 + Math.cos(i) * 128, 128 + Math.sin(i) * 128);
+    var x = 128 + Math.cos(i) * 128 + (-bumpiness / 2 + Math.random() * bumpiness);
+    var y = 128 + Math.sin(i) * 128  + (-bumpiness / 2 + Math.random() * bumpiness);
+    context.lineTo(x, y);
+  }
+  context.closePath();
+  context.fill();
+  // context.stroke();
+
+  var planet = this.spriteFromContext(context);
+  planet.x = 100;
+  planet.y = 100;
+  planet.scale.set(0.5, 0.5);
+  this.stage.addChild(planet);
+
   this.stage.click = this.stage.tap = this.mouseDownListener.bind(this);
   this.stage.mousewheel = this.mouseWheelListener.bind(this);
   this.stage.mousemove = this.mouseMoveListener.bind(this);
@@ -83,6 +119,16 @@ function Parsecs(width, height, domElement) {
   */
 }
 util.inherits(Parsecs, events.EventEmitter);
+
+Parsecs.prototype.getNewContext = function(width, height) {
+  this.tempCanvas.width = width;
+  this.tempCanvas.height = height;
+  return this.tempCanvas.getContext('2d');
+};
+
+Parsecs.prototype.spriteFromContext = function(context) {
+  return new PIXI.Sprite(PIXI.Texture.fromCanvas(context.canvas));
+}
 
 Parsecs.prototype.run = function(time) {
   this.timeCount += time / 100000;
