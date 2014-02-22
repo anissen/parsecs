@@ -58,7 +58,7 @@ function getPlanetPosition(radius, minDist) {
     for (var i = 0; i < planets.length; i++) {
       var planet = planets[i];
       var dist = Math.sqrt(Math.pow(pos.x - planet.position.x, 2) + Math.pow(pos.y - planet.position.y, 2));
-      var planetRadius = planet.circle.radius;
+      var planetRadius = planet.sprite.sprite.width / 2;
       if (dist - (planetRadius + radius) < minDist) {
         validPos = false;
         break;
@@ -69,19 +69,58 @@ function getPlanetPosition(radius, minDist) {
   }
 }
 
+var planetContext = parsecs.getNewContext(256, 256);
+// context.strokeStyle = "#000000";
+planetContext.fillStyle = '#000000';
+
+var bumpiness = 5;
+planetContext.beginPath();
+for (var i = 0; i < (2 * Math.PI); i += 0.1) {
+  var centerX = 128;
+  var centerY = 128;
+  var radius = 100 + Math.random() * bumpiness;
+  if (i === 0)
+    planetContext.moveTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
+  else
+    planetContext.lineTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
+}
+planetContext.closePath();
+planetContext.fill();
+// planetContext.stroke();
+
+
+
 for (var i = 0; i < 20; i++) {
-  var radius = 40 + Math.random() * 60; 
+  var scale = 0.3 + Math.random() * 0.7; // 40 + Math.random() * 60; 
+  var planetSprite = planetContext.toSprite();
+  planetSprite.scale.set(scale, scale);
+  parsecs.getLayer().addChild(planetSprite);
+  var radius = planetSprite.width / 2;
   var pos = getPlanetPosition(radius, 0);
+  planetSprite.position.set(pos.x, pos.y);
+  planetSprite.anchor.set(0.5, 0.5);
+  planetSprite.interactive = true;
+  // planetSprite.buttonMode = true;
+  planetSprite.hitArea = new PIXI.Circle(0, 0, radius);
+  (function(scale) {
+    planetSprite.mouseover = function(event) {
+      var planet = event.target;
+      TweenLite.to(planet.scale, 0.5, { x: scale * 1.2, y: scale * 1.2, ease: Elastic.easeOut });
+    };
+    planetSprite.mouseout = function(event) {
+      var planet = event.target;
+      TweenLite.to(planet.scale, 0.5, { x: scale, y: scale, ease: Elastic.easeInOut });
+    };
+  })(scale);
+
   var planet = {
     position: {
       x: pos.x,
       y: pos.y,
       rotation: 0
     },
-    circle: {
-      color: 0x000000,
-      alpha: 1,
-      radius: radius
+    sprite: {
+      sprite: planetSprite,
     },
     motion: {
       dx: 0,
@@ -109,6 +148,7 @@ context.fillRect(shipCenterX + 32 - 8, shipCenterY + 28, 16, 32);
 
 var shipSprite = context.toSprite();
 shipSprite.anchor.set(0.5, 0.5);
+// shipSprite.pivot.set(0.5, 0.5);
 shipSprite.scale.set(0.3, 0.3);
 parsecs.getLayer().addChild(shipSprite);
 
@@ -144,11 +184,10 @@ var cursorEntity = {
     y: world.height / 2,
     rotation: 0
   },
-  rectangle: {
+  circle: {
     color: 0x00FF33,
     alpha: 1,
-    height: 25,
-    width: 25
+    radius: 10
   }
 };
 world.entities.push(cursorEntity);
@@ -167,6 +206,11 @@ var updateFunc = function(deltaTime) {
 
   camera.x = cameraX;
   camera.y = cameraY;
+
+  var mousePos = parsecs.getStage().getMousePosition();
+  var worldPos = parsecs.toWorldPosition(mousePos);
+  cursorEntity.position.x = worldPos.x;
+  cursorEntity.position.y = worldPos.y;
 };
 
 var renderFunc = function(layer) {
@@ -180,39 +224,17 @@ parsecs.on('mousedown', function(pos) {
   var worldPos = parsecs.toWorldPosition(pos);
   var dist = Math.sqrt(Math.pow(shipEntity.position.x - worldPos.x, 2) + Math.pow(shipEntity.position.y - worldPos.y, 2));
 
-  var t2 = new TimelineLite();
-  t2
-    .to(shipEntity.position, dist / 100, { x: worldPos.x, y: worldPos.y });
+  TweenLite.to(shipEntity.position, dist / 100, { x: worldPos.x, y: worldPos.y });
+  cursorEntity.circle.radius = 30;
+  TweenLite.to(cursorEntity.circle, 0.3, { radius: 10, ease: Bounce.easeOut });
 });
 
 parsecs.on('mousemove', function(pos) {
-  var worldPos = parsecs.toWorldPosition(pos);
-  cursorEntity.position.x = worldPos.x;
-  cursorEntity.position.y = worldPos.y;
 
-  var planetMouseOver = null;
-  planets.forEach(function(planet) {
-    planet.circle.highlight = false;
-
-    if (this.radius <= 0)
-        return;
-  
-    var insideCircle = Math.pow(worldPos.x - planet.position.x, 2) + Math.pow(worldPos.y - planet.position.y, 2) <= Math.pow(planet.circle.radius, 2);
-    if (insideCircle) {
-      planetMouseOver = planet;
-    }
-  });
-
-  if (planetMouseOver) {
-    planetMouseOver.circle.highlight = true;
-    var tl = new TimelineLite();
-    tl
-      .to(planetMouseOver.circle, 1, { radius: planetMouseOver.circle.radius * 1.5, ease: Elastic.easeInOut });
-  }
 });
 
 parsecs.on('mousewheel', function(evt) {
-  camera.zoom = clamp(camera.zoom + evt.zoom, 0.3, 10);
+  TweenLite.to(camera, 0.2, { zoom: clamp(camera.zoom + evt.zoom, 0.5, 8) });
 });
 
 function clamp(value, min, max) {
@@ -227,6 +249,8 @@ parsecs.run();
 
 // Expose for testing
 window.parsecs = parsecs;
+
+// TODO: Only run GSAP on each frame
 
 /*
 function dot(prop, obj) { return obj[prop]; }

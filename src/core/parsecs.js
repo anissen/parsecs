@@ -35,31 +35,6 @@ function Parsecs(width, height, domElement) {
   this.graphics = new PIXI.Graphics();
   this.stage.addChild(this.graphics);
 
-  var context = this.getNewContext(256, 256);
-  // context.strokeStyle = "#000000";
-  context.fillStyle = '#000000';
-  
-  var bumpiness = 5;
-  context.beginPath();
-  for (var i = 0; i < (2 * Math.PI); i += 0.1) {
-    var centerX = 128;
-    var centerY = 128;
-    var radius = 128 + Math.random() * bumpiness;
-    if (i === 0)
-      context.moveTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
-    else
-      context.lineTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
-  }
-  context.closePath();
-  context.fill();
-  // context.stroke();
-
-  var planet = this.spriteFromContext(context);
-  planet.x = 100;
-  planet.y = 100;
-  planet.scale.set(0.5, 0.5);
-  this.stage.addChild(planet);
-
   this.stage.click = this.stage.tap = this.mouseDownListener.bind(this);
   this.stage.mousewheel = this.mouseWheelListener.bind(this);
   this.stage.mousemove = this.mouseMoveListener.bind(this);
