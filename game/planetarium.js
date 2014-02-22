@@ -52,7 +52,7 @@ starContext.fill();
 for (var i = 0; i < 1000; i++) {
   var x = Math.random() * world.width; 
   var y = Math.random() * world.height; 
-  var scale = 1 + Math.random() * 1;
+  var scale = 0.2 + Math.random() * 0.8;
   var alpha = Math.random() * 0.3;
 
   var starSprite = starContext.toSprite();
@@ -135,13 +135,26 @@ for (var i = 0; i < 20; i++) {
   // planetSprite.buttonMode = true;
   planetSprite.hitArea = new PIXI.Circle(0, 0, planetRadius);
   (function(scale) {
-    planetSprite.mouseover = function(event) {
-      var planet = event.target;
-      TweenLite.to(planet.scale, 0.5, { x: scale * 1.2, y: scale * 1.2, ease: Elastic.easeOut });
+    planetSprite.mouseover = function() {
+      TweenLite.to(this.scale, 0.5, { x: scale * 1.2, y: scale * 1.2, ease: Elastic.easeOut });
     };
-    planetSprite.mouseout = function(event) {
-      var planet = event.target;
-      TweenLite.to(planet.scale, 0.5, { x: scale, y: scale, ease: Elastic.easeInOut });
+    planetSprite.mouseout = function() {
+      TweenLite.to(this.scale, 0.5, { x: scale, y: scale, ease: Elastic.easeInOut });
+    };
+    planetSprite.click = function() {
+      console.log('planet click');
+
+      // u = unit vector from planet to ship
+      // dest = planet.pos + u * radius
+
+      var distPlantToShip = Math.sqrt(Math.pow(shipEntity.position.x - this.position.x, 2) + Math.pow(shipEntity.position.y - this.position.y, 2));
+      var unitVector = { x: (shipEntity.position.x - this.position.x) / distPlantToShip, y: (shipEntity.position.y - this.position.y) / distPlantToShip };
+      var destination = { x: this.position.x + unitVector.x * this.width / 2, y: this.position.y + unitVector.y * this.width / 2 };
+      var dist = Math.sqrt(Math.pow(shipEntity.position.x - destination.x, 2) + Math.pow(shipEntity.position.y - destination.y, 2));
+
+      TweenLite.to(shipEntity.position, dist / 100, { x: destination.x, y: destination.y });
+      cursorEntity.sprite.sprite.scale.set(2);
+      TweenLite.to(cursorEntity.sprite.sprite.scale, 0.3, { x: 0.3, y: 0.3, ease: Bounce.easeOut });
     };
   })(scale);
 
@@ -269,6 +282,7 @@ parsecs.on('update', updateFunc);
 parsecs.on('render', renderFunc);
 
 parsecs.on('mousedown', function(pos) {
+  console.log('mouse down layer');
   var worldPos = parsecs.toWorldPosition(pos);
   var dist = Math.sqrt(Math.pow(shipEntity.position.x - worldPos.x, 2) + Math.pow(shipEntity.position.y - worldPos.y, 2));
 
