@@ -219,6 +219,9 @@ parsecs.on('mousedrag', function(evt) {
 
 parsecs.run();
 
+// Expose for testing
+window.parsecs = parsecs;
+
 /*
 function dot(prop, obj) { return obj[prop]; }
 var dotCircle = dot.bind(null, 'circle');

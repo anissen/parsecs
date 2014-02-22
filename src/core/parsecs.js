@@ -54,12 +54,14 @@ function Parsecs(width, height, domElement) {
   */
   var bumpiness = 5;
   context.beginPath();
-  for (var i = 0; i < (2 * Math.PI); i += 0.2) {
+  for (var i = 0; i < (2 * Math.PI); i += 0.1) {
+    var centerX = 128;
+    var centerY = 128;
+    var radius = 128 + Math.random() * bumpiness;
     if (i === 0)
-      context.moveTo(128 + Math.cos(i) * 128, 128 + Math.sin(i) * 128);
-    var x = 128 + Math.cos(i) * 128 + (-bumpiness / 2 + Math.random() * bumpiness);
-    var y = 128 + Math.sin(i) * 128  + (-bumpiness / 2 + Math.random() * bumpiness);
-    context.lineTo(x, y);
+      context.moveTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
+    else
+      context.lineTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
   }
   context.closePath();
   context.fill();
@@ -262,6 +264,36 @@ Parsecs.prototype.mouseDragListener = function(evt) {
   this.emit('mousedrag', { x: mousePos.x, y: mousePos.y, diffX: diff.x, diffY: diff.y });
   this.oldMousePos = mousePos;
   */
+};
+
+Parsecs.prototype.testSpeech = function() {
+  function createVoice(options) {
+    options = options || {};
+    console.log(options);
+    var speech = new window.SpeechSynthesisUtterance();
+    console.log(window.speechSynthesis.pending);
+    var voices = window.speechSynthesis.getVoices();
+    speech.voiceURI = 'native';
+    speech.voice = voices[(options.voice === undefined ? 2 : options.voice)];
+    speech.volume = options.volume || 1;
+    speech.rate = options.rate || 1;
+    speech.pitch = options.pitch || 1;
+    speech.lang = options.lang || 'en-US';
+    speech.speak = function(text) {
+      if (window.speechSynthesis.speaking)
+        window.speechSynthesis.cancel();
+      speech.text = text;
+      window.speechSynthesis.speak(speech);
+    };
+    return speech;
+  }
+
+  // TODO: Delay speech until window.speechSynthesis.getVoices() return a list of length > 0
+
+  var voice = createVoice({
+    voice: 1
+  });
+  voice.speak('In an explosion of light, the sky turned so bright. When the fireworks was done, oh what was to come? Across the infinity of space, the universe had found its face.');
 };
 
 Parsecs.World = require("./world");
