@@ -95,13 +95,13 @@ for (var i = 0; i < 20; i++) {
 
 var shipGraphics = new PIXI.Graphics();
 shipGraphics.beginFill(0x2244CC, 1);
-  shipGraphics.lineStyle(1, 0x4422CC, 1);
+shipGraphics.lineStyle(1, 0x4422CC, 1);
 
-  // draw a second shape
-  shipGraphics.moveTo(0, -15);
-  shipGraphics.lineTo(10, 15);
-  shipGraphics.lineTo(-10, 15);
-  shipGraphics.lineTo(0, -15);
+// draw a second shape
+shipGraphics.moveTo(0, -15);
+shipGraphics.lineTo(10, 15);
+shipGraphics.lineTo(-10, 15);
+shipGraphics.lineTo(0, -15);
 shipGraphics.endFill();
 
 parsecs.getLayer().addChild(shipGraphics);

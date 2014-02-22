@@ -22,6 +22,22 @@
 * Steering? (http://gamedevelopment.tutsplus.com/series/understanding-steering-behaviors--gamedev-12732)
 * Promise-based behavior trees? (ref. http://takinginitiative.wordpress.com/2014/02/17/synchronized-behavior-trees/ ?)
 * Rule/trigger-system (use for e.g. achievements, game logic, etc.)
+* Plug-in structure:
+```
+var MyLib = function(plugins) {
+  for (var name in plugins) {
+    var value = plugins[name];
+    MyLib.plugins[name](value);
+  }
+};
+MyLib.plugins = {}
+MyLib.plugins.baz = function(value) {
+  console.log('baz plugin initialized called with value', value);
+};
+
+var myLib = new MyLib({ baz: { 'stuff': 'here' } });
+```
+(see https://github.com/markdalgleish/bespoke.js/blob/master/src/bespoke.js#L89)
 
 ## Planetarium libraries: (https://github.com/anissen/planetarium/blob/master/lib/planets/planetarium.coffee)
 * Random
