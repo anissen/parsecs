@@ -93,18 +93,24 @@ for (var i = 0; i < 20; i++) {
   world.entities.push(planet);
 }
 
-var shipGraphics = new PIXI.Graphics();
-shipGraphics.beginFill(0x2244CC, 1);
-shipGraphics.lineStyle(1, 0x4422CC, 1);
+var context = parsecs.getNewContext(128, 128);
+var shipCenterX = 64;
+var shipCenterY = 64;
+// context.fillStyle = 'red';
+// context.fillRect(0, 0, 128, 128);
+context.fillStyle = 'blue';
+context.beginPath();
+context.arc(shipCenterX, shipCenterY - 16, 32, 0, 2 * Math.PI);
+context.fill();
+context.fillRect(shipCenterX - 32, shipCenterY - 16, 64, 64);
+context.fillStyle = 'darkblue';
+context.fillRect(shipCenterX - 32 - 8, shipCenterY + 28, 16, 32);
+context.fillRect(shipCenterX + 32 - 8, shipCenterY + 28, 16, 32);
 
-// draw a second shape
-shipGraphics.moveTo(0, -15);
-shipGraphics.lineTo(10, 15);
-shipGraphics.lineTo(-10, 15);
-shipGraphics.lineTo(0, -15);
-shipGraphics.endFill();
-
-parsecs.getLayer().addChild(shipGraphics);
+var shipSprite = context.toSprite();
+shipSprite.anchor.set(0.5, 0.5);
+shipSprite.scale.set(0.3, 0.3);
+parsecs.getLayer().addChild(shipSprite);
 
 var shipEntity = { 
   position: {
@@ -118,7 +124,7 @@ var shipEntity = {
   //   drotation: 0.001
   // },
   ship: {
-    graphics: shipGraphics,
+    graphics: shipSprite,
     color: 0x0000FF,
     alpha: 1,
     radius: 20

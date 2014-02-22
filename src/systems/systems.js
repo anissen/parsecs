@@ -30,7 +30,8 @@ module.exports.RenderSystem = {
     });
 
     entities.filter(function(e) { return e.position && e.ship; }).forEach(function(entity) {
-      entity.ship.graphics.rotation = Math.atan2(entity.position.y - entity.ship.graphics.position.y, entity.position.x - entity.ship.graphics.position.x) + Math.PI / 2;
+      if (entity.position.y !== entity.ship.graphics.position.y || entity.position.x !== entity.ship.graphics.position.x)
+        entity.ship.graphics.rotation = Math.atan2(entity.position.y - entity.ship.graphics.position.y, entity.position.x - entity.ship.graphics.position.x) + Math.PI / 2;
       // entity.ship.graphics.rotation = entity.position.rotation;
       entity.ship.graphics.position.x = entity.position.x;
       entity.ship.graphics.position.y = entity.position.y;

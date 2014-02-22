@@ -35,23 +35,10 @@ function Parsecs(width, height, domElement) {
   this.graphics = new PIXI.Graphics();
   this.stage.addChild(this.graphics);
 
-  this.tempCanvas = {};
-  this.tempCanvas = document.createElement('canvas');
-
   var context = this.getNewContext(256, 256);
   // context.strokeStyle = "#000000";
   context.fillStyle = '#000000';
-  /*
-  context.beginPath();
-
-  context.arc(128, 128, 128, 0, 2 * Math.PI);
-  context.fill();
-  for (var i = 0; i < 100; i++) {
-    context.beginPath();
-    context.arc(Math.random() * 256, Math.random() * 256, 5, 0, 2 * Math.PI);
-    context.fill();
-  }
-  */
+  
   var bumpiness = 5;
   context.beginPath();
   for (var i = 0; i < (2 * Math.PI); i += 0.1) {
@@ -123,9 +110,14 @@ function Parsecs(width, height, domElement) {
 util.inherits(Parsecs, events.EventEmitter);
 
 Parsecs.prototype.getNewContext = function(width, height) {
-  this.tempCanvas.width = width;
-  this.tempCanvas.height = height;
-  return this.tempCanvas.getContext('2d');
+  var tempCanvas = document.createElement('canvas');
+  tempCanvas.width = width;
+  tempCanvas.height = height;
+  var context = tempCanvas.getContext('2d');
+  context.toSprite = function(scaleMode) {
+    return new PIXI.Sprite(PIXI.Texture.fromCanvas(this.canvas, scaleMode));  
+  };
+  return context;
 };
 
 Parsecs.prototype.spriteFromContext = function(context) {
