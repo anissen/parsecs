@@ -38,6 +38,8 @@ MyLib.plugins.baz = function(value) {
 var myLib = new MyLib({ baz: { 'stuff': 'here' } });
 ```
 (see https://github.com/markdalgleish/bespoke.js/blob/master/src/bespoke.js#L89)
+* Got focus/lost focus: http://codepen.io/jonathan/pen/sxgJl
+* Work around "require('../../../blah'))": http://lostechies.com/derickbailey/2014/02/20/how-i-work-around-the-require-problem-in-nodejs/
 
 ## Planetarium libraries: (https://github.com/anissen/planetarium/blob/master/lib/planets/planetarium.coffee)
 * Random
@@ -48,8 +50,11 @@ var myLib = new MyLib({ baz: { 'stuff': 'here' } });
 * Fullscreen
 * Mobile?
 * Procedural sky rendering: https://github.com/wwwtyro/procedural.js
+* Particles: (http://lonely-pixel.com/blog/making-a-particle-engine-using-javascript-part-1)
+* Speech synthesis: http://codepen.io/matt-west/pen/wGzuJ, http://blog.teamtreehouse.com/getting-started-speech-synthesis-api
 
 ## Libraries:
+* Architechture inspirations: https://github.com/markdalgleish/bespoke.js, https://github.com/ondras/rot.js
 * Random: seed-random
 * Rendering: Pixi
 * Audio: Howler
@@ -61,7 +66,7 @@ var myLib = new MyLib({ baz: { 'stuff': 'here' } });
 * Fullscreen: screenfull.js (https://github.com/sindresorhus/screenfull.js)
 * Cross platform: Cocoon.js (?)
 * State manager: https://github.com/jakesgordon/javascript-state-machine (?)
-* Storage: https://github.com/mozilla/localForage ?
+* Storage: https://github.com/mozilla/localForage ? (manager: https://github.com/AndreLion/html5-localstorage-manager)
 * Network: Cloak (?), Primus (?)
 * Vibration?
 * GLSL transitions?
@@ -73,7 +78,9 @@ var myLib = new MyLib({ baz: { 'stuff': 'here' } });
     * https://github.com/harthur/color ?
     * https://github.com/gka/chroma.js ?
 * Analytics: ?
+* Validate components? (https://github.com/Atinux/schema-inspector)
+* Replay system?
 
 ## Stupid ideas
-* Behavior tree as an Entity-Component-System 
+* Behavior tree as an Entity-Component-System (reference: https://github.com/Calamari/BehaviorTree.js)
 
