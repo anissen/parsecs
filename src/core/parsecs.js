@@ -262,21 +262,30 @@ Parsecs.prototype.testSpeech = function() {
     speech.rate = options.rate || 1;
     speech.pitch = options.pitch || 1;
     speech.lang = options.lang || 'en-US';
+    speech.onstart = function(event) {
+      console.log('The utterance started to be spoken.');
+    };
+    speech.onend = function(event) {
+      console.log('The utterance ended after ' + event.elapsedTime + ' seconds', event);
+    };
     speech.speak = function(text) {
       if (window.speechSynthesis.speaking)
         window.speechSynthesis.cancel();
-      speech.text = text;
-      window.speechSynthesis.speak(speech);
+      this.text = text;
+      window.speechSynthesis.speak(this);
     };
     return speech;
   }
 
   // TODO: Delay speech until window.speechSynthesis.getVoices() return a list of length > 0
+  // good voices: [1, 0, 2, 13, 15, 19, 23, 26, 33]
 
   var voice = createVoice({
     voice: 1
   });
-  voice.speak('In an explosion of light, the sky turned so bright. When the fireworks was done, oh what was to come? Across the infinity of space, the universe had found its face.');
+
+  voice.speak('Hello world!');
+  //voice.speak('In an explosion of light, the sky turned so bright. When the fireworks was done, oh what was to come? Across the infinity of space, the universe had found its face.');
 };
 
 Parsecs.World = require("./world");
