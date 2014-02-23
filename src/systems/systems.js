@@ -8,6 +8,11 @@ module.exports.MotionSystem = {
       entity.position.x += entity.motion.dx * deltaTime;
       entity.position.y += entity.motion.dy * deltaTime;
       entity.position.rotation += entity.motion.drotation * deltaTime;
+      if (entity.sprite) {
+        entity.sprite.sprite.position.x = entity.position.x;
+        entity.sprite.sprite.position.y = entity.position.y;
+        entity.sprite.sprite.rotation = entity.position.rotation;
+      }
     });
   }
 };

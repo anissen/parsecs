@@ -170,7 +170,7 @@ for (var i = 0; i < 20; i++) {
     motion: {
       dx: 0,
       dy: 0,
-      drotation: -0.01
+      drotation: -0.0002 + Math.random() * 0.0004
     }
   };
   planets.push(planet);
@@ -313,6 +313,9 @@ parsecs.run();
 window.parsecs = parsecs;
 
 // TODO: Only run GSAP on each frame
+
+
+
 
 /*
 function dot(prop, obj) { return obj[prop]; }
