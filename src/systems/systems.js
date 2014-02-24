@@ -9,9 +9,10 @@ module.exports.MotionSystem = {
       entity.position.y += entity.motion.dy * deltaTime;
       entity.position.rotation += entity.motion.drotation * deltaTime;
       if (entity.sprite) {
-        entity.sprite.sprite.position.x = entity.position.x;
-        entity.sprite.sprite.position.y = entity.position.y;
-        entity.sprite.sprite.rotation = entity.position.rotation;
+        var sprite = entity.sprite.sprite;
+        sprite.position.x = entity.position.x;
+        sprite.position.y = entity.position.y;
+        sprite.rotation = entity.position.rotation;
       }
     });
   }
@@ -32,14 +33,6 @@ module.exports.RenderSystem = {
       layer.beginFill(entity.circle.highlight ? 0xFF0000 : entity.circle.color, entity.circle.alpha);
       layer.drawCircle(entity.position.x, entity.position.y, entity.circle.radius);
       layer.endFill();
-    });
-
-    entities.filter(function(e) { return e.position && e.ship; }).forEach(function(entity) {
-      if (entity.position.y !== entity.ship.graphics.position.y || entity.position.x !== entity.ship.graphics.position.x)
-        entity.ship.graphics.rotation = Math.atan2(entity.position.y - entity.ship.graphics.position.y, entity.position.x - entity.ship.graphics.position.x) + Math.PI / 2;
-      // entity.ship.graphics.rotation = entity.position.rotation;
-      entity.ship.graphics.position.x = entity.position.x;
-      entity.ship.graphics.position.y = entity.position.y;
     });
   }
 };

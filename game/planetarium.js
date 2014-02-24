@@ -34,6 +34,13 @@ var rgba = function(r, g, b, a) {
   return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 };
 
+var texture = PIXI.Texture.fromImage('./assets/starfield9.jpg');
+var tilingSprite = new PIXI.TilingSprite(texture, world.width * 2, world.height * 2);
+tilingSprite.scale.set(0.5);
+tilingSprite.alpha = 0.7;
+parsecs.getLayer().addChild(tilingSprite);
+
+/*
 var starContext = parsecs.getNewContext(128, 128);
 var gradient = starContext.createRadialGradient(64, 64, 64, 64, 64, 0);
 gradient.addColorStop(0, rgba(1, 1, 1, 0));
@@ -72,6 +79,7 @@ for (var i = 0; i < 1000; i++) {
     }
   });
 }
+*/
 
 var planets = [];
 
@@ -126,7 +134,6 @@ for (var i = 0; i < 20; i++) {
   var scale = 0.3 + Math.random() * 0.7; // 40 + Math.random() * 60; 
   var planetSprite = planetContext.toSprite();
   planetSprite.scale.set(scale, scale);
-  parsecs.getLayer().addChild(planetSprite);
   var radius = planetRadius * scale; //planetSprite.width / 2;
   var pos = getPlanetPosition(radius, 0);
   planetSprite.position.set(pos.x, pos.y);
@@ -134,12 +141,28 @@ for (var i = 0; i < 20; i++) {
   planetSprite.interactive = true;
   // planetSprite.buttonMode = true;
   planetSprite.hitArea = new PIXI.Circle(0, 0, planetRadius);
-  (function(scale) {
+
+  var textSprite = new PIXI.Text('Planet #' + (i + 1), {font: "bold italic 38px Arvo", fill: "white", align: "center", stroke: "black", strokeThickness: 5});
+  textSprite.anchor.set(0.5, 0.5);
+  textSprite.position.x = pos.x;
+  textSprite.position.y = pos.y; // - (radius * 1.2) - textSprite.height / 2;
+  // textSprite.visible = false;
+  textSprite.alpha = 0;
+  parsecs.getLayer().addChild(textSprite);
+  parsecs.getLayer().addChild(planetSprite);
+
+  var planetRotation = -0.0002 + Math.random() * 0.0004;
+
+  (function(scale, textSprite, planetRotation) {
     planetSprite.mouseover = function() {
+      TweenLite.to(textSprite, 1, { y: this.position.y - scale * 120 - textSprite.height / 2 /* TODO: Fix this value */, alpha: 1, ease: Elastic.easeOut });
       TweenLite.to(this.scale, 0.5, { x: scale * 1.2, y: scale * 1.2, ease: Elastic.easeOut });
+      // textSprite.visible = true;
     };
     planetSprite.mouseout = function() {
+      TweenLite.to(textSprite, 1, { y: this.position.y, alpha: 0, ease: Elastic.easeIn });
       TweenLite.to(this.scale, 0.5, { x: scale, y: scale, ease: Elastic.easeInOut });
+      // textSprite.visible = false;
     };
     planetSprite.click = function() {
       console.log('planet click');
@@ -149,14 +172,29 @@ for (var i = 0; i < 20; i++) {
 
       var distPlantToShip = Math.sqrt(Math.pow(shipEntity.position.x - this.position.x, 2) + Math.pow(shipEntity.position.y - this.position.y, 2));
       var unitVector = { x: (shipEntity.position.x - this.position.x) / distPlantToShip, y: (shipEntity.position.y - this.position.y) / distPlantToShip };
-      var destination = { x: this.position.x + unitVector.x * this.width / 2, y: this.position.y + unitVector.y * this.width / 2 };
+      var destination = { x: this.position.x + unitVector.x * scale * 200 /* TODO: Fix this value */, y: this.position.y + unitVector.y * scale * 200 /* TODO: Fix this value */ };
       var dist = Math.sqrt(Math.pow(shipEntity.position.x - destination.x, 2) + Math.pow(shipEntity.position.y - destination.y, 2));
 
-      TweenLite.to(shipEntity.position, dist / 100, { x: destination.x, y: destination.y });
+      var me = this;
+      //TweenLite.to(shipEntity.position, dist / 100, { x: destination.x, y: destination.y, onComplete: function() { console.log('arrived at planet!'); } });
+      var tl = new TimelineLite({ onComplete: function() {
+        shipEntity.position.x = me.position.x;
+        shipEntity.position.y = me.position.y;
+        shipEntity.sprite.sprite.pivot.set(me.width);
+        shipEntity.motion.drotation = planetRotation;
+      } });
+
+      var travelTime = dist / 100;
+      tl
+        .to(shipEntity.position, travelTime, { x: destination.x, y: destination.y })
+        .to(camera, 5, { zoom: 3 }, '-=2')
+        .to(shipEntity.position, 2, { rotation: (Math.atan2(destination.y - shipEntity.position.y, destination.x - shipEntity.position.x) - Math.PI / 2) % (Math.PI * 2) }, '-=3')
+        .to(shipEntity.position, 2, { x: this.position.x + unitVector.x * scale * 120 /* TODO: Fix this value */, y: this.position.y + unitVector.y * scale * 120 });
+
       cursorEntity.sprite.sprite.scale.set(2);
       TweenLite.to(cursorEntity.sprite.sprite.scale, 0.3, { x: 0.3, y: 0.3, ease: Bounce.easeOut });
     };
-  })(scale);
+  })(scale, textSprite, planetRotation);
 
   var planet = {
     position: {
@@ -164,14 +202,20 @@ for (var i = 0; i < 20; i++) {
       y: pos.y,
       rotation: 0
     },
+    textOnHover: {
+      sprite: textSprite
+    },
     sprite: {
       sprite: planetSprite,
     },
     motion: {
       dx: 0,
       dy: 0,
-      drotation: -0.0002 + Math.random() * 0.0004
-    }
+      drotation: planetRotation
+    } /*,
+    obsticle: {
+      avoidRadius: radius * 1.5
+    } */
   };
   planets.push(planet);
   world.entities.push(planet);
@@ -203,16 +247,13 @@ var shipEntity = {
     y: world.height / 2,
     rotation: 0
   },
-  // motion: {
-  //   dx: 0,
-  //   dy: 0,
-  //   drotation: 0.001
-  // },
-  ship: {
-    graphics: shipSprite,
-    color: 0x0000FF,
-    alpha: 1,
-    radius: 20
+  motion: {
+    dx: 0,
+    dy: 0,
+    drotation: 0
+  },
+  sprite: {
+    sprite: shipSprite
   }/*,
   emitter: {
     delay: 100,
@@ -255,9 +296,19 @@ var cursorEntity = {
 
 var camera = parsecs.getCamera();
 
+// var lastShipPosX = shipEntity.position.x;
+// var lastShipPosY = shipEntity.position.y;
+
 var updateFunc = function(deltaTime) {
   systems.MotionSystem.tick(world.getEntities(), deltaTime);
   systems.EmitterSystem.tick(world.getEntities(), deltaTime);
+
+  // TODO: Make this into a component/system
+  // if (shipEntity.landing !== true && (shipEntity.position.x !== lastShipPosX || shipEntity.position.y !== lastShipPosY)) {
+  //   shipEntity.sprite.sprite.rotation = Math.atan2(lastShipPosY - shipEntity.position.y, lastShipPosX - shipEntity.position.x) - Math.PI / 2;
+  // }
+  // lastShipPosX = shipEntity.position.x;
+  // lastShipPosY = shipEntity.position.y;
 
   // TODO: Move this logic to parsecs and/or camera
   var clampedX = clamp(shipEntity.position.x, (width / 2)  / camera.zoom, world.width - (width / 2)  / camera.zoom);

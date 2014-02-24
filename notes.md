@@ -40,6 +40,7 @@ var myLib = new MyLib({ baz: { 'stuff': 'here' } });
 (see https://github.com/markdalgleish/bespoke.js/blob/master/src/bespoke.js#L89)
 * Got focus/lost focus: http://codepen.io/jonathan/pen/sxgJl
 * Work around "require('../../../blah'))": http://lostechies.com/derickbailey/2014/02/20/how-i-work-around-the-require-problem-in-nodejs/
+* Web Audio on iOS: http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
 
 ## Planetarium libraries: (https://github.com/anissen/planetarium/blob/master/lib/planets/planetarium.coffee)
 * Random
