@@ -19,6 +19,7 @@
 * Use Promises for callbacks (e.g. Q, bluebird)
     - http://greweb.me/2014/01/promisify-your-games/
     - http://greweb.me/2013/07/deferred/
+    - http://taoofcode.net/promise-anti-patterns/
 * Steering? (http://gamedevelopment.tutsplus.com/series/understanding-steering-behaviors--gamedev-12732)
 * Promise-based behavior trees? (ref. http://takinginitiative.wordpress.com/2014/02/17/synchronized-behavior-trees/ ?)
 * Rule/trigger-system (use for e.g. achievements, game logic, etc.)
@@ -37,10 +38,17 @@ MyLib.plugins.baz = function(value) {
 
 var myLib = new MyLib({ baz: { 'stuff': 'here' } });
 ```
-(see https://github.com/markdalgleish/bespoke.js/blob/master/src/bespoke.js#L89)
+(see https://github.com/markdalgleish/bespoke.js/blob/master/src/bespoke.js#L89, http://jsfiddle.net/anissen/3vdy4/)
+* Speech synthesis support detection: `var speechSynthSupported = ('speechSynthesis' in window);`
 * Got focus/lost focus: http://codepen.io/jonathan/pen/sxgJl
 * Work around "require('../../../blah'))": http://lostechies.com/derickbailey/2014/02/20/how-i-work-around-the-require-problem-in-nodejs/
 * Web Audio on iOS: http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
+* Design inspiration:
+  - https://lh4.googleusercontent.com/-jj9Yd0__iOY/UwDpROfLBaI/AAAAAAAACTY/wgqMhXHPiqY/s0/codrops_collective_103B.png
+  - https://lh6.googleusercontent.com/-MidJ11YeTTM/Uu36tdhbTbI/AAAAAAAACQw/qr7rrybJf-8/s0/codrops_collective_101B.png
+  - http://cs322521.vk.me/v322521416/78aa/xH_nibothx0.jpg
+* Rotating around a point: http://www.html5gamedevs.com/topic/4193-rotating-around-a-point/
+* Audio visualization
 
 ## Planetarium libraries: (https://github.com/anissen/planetarium/blob/master/lib/planets/planetarium.coffee)
 * Random

@@ -110,7 +110,7 @@ function getPlanetPosition(radius, minDist) {
 
 var planetContext = parsecs.getNewContext(256, 256);
 // context.strokeStyle = "#000000";
-planetContext.fillStyle = '#000000';
+planetContext.fillStyle = '#FFFFFF';
 
 var planetRadius = 100;
 var bumpiness = 5;
@@ -140,6 +140,7 @@ for (var i = 0; i < 20; i++) {
   planetSprite.anchor.set(0.5, 0.5);
   planetSprite.interactive = true;
   // planetSprite.buttonMode = true;
+  planetSprite.tint = 0x000000;
   planetSprite.hitArea = new PIXI.Circle(0, 0, planetRadius);
 
   var textSprite = new PIXI.Text('Planet #' + (i + 1), {font: "bold italic 38px Arvo", fill: "white", align: "center", stroke: "black", strokeThickness: 5});
