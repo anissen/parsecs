@@ -74,40 +74,44 @@ for (var i = 0; i < 200; i++) {
   parsecs.getLayer().addChild(starSprite);
 }
 
-var planetContext = parsecs.getNewContext(512, 512);
-// planetContext.strokeStyle = '#CC6666';
-// planetContext.strokeWidth = 10;
-planetContext.fillStyle = '#FFFFFF';
+function generatePlanetSprite(planetRadius) {
+  var planetContext = parsecs.getNewContext(512, 512);
+  // planetContext.strokeStyle = '#CC6666';
+  // planetContext.strokeWidth = 10;
+  planetContext.fillStyle = '#FFFFFF';
 
-var planetRadius = 200;
-var bumpiness = 5;
-planetContext.beginPath();
-var centerX = 256;
-var centerY = 256;
-for (var i = 0; i < (2 * Math.PI); i += 0.1) {
-  var radius = planetRadius; // + Math.random() * bumpiness;
-  if (i === 0)
-    planetContext.moveTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
-  else
-    planetContext.lineTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
-}
-planetContext.closePath();
-planetContext.fill();
-planetContext.fillStyle = '#DDDDDD';
-for (var i = 0; i < 20; i++) {
-  var craterRadius = 10 + Math.random() * 20;
-
+  var bumpiness = 5;
   planetContext.beginPath();
-  planetContext.arc(centerX + Math.random() * Math.cos(i) * (planetRadius - craterRadius), centerY + Math.random() * Math.sin(i) * (planetRadius  - craterRadius), craterRadius, 0, Math.PI * 2);
+  var centerX = 256;
+  var centerY = 256;
+  for (var i = 0; i < (2 * Math.PI); i += 0.1) {
+    var radius = planetRadius; // + Math.random() * bumpiness;
+    if (i === 0)
+      planetContext.moveTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
+    else
+      planetContext.lineTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
+  }
   planetContext.closePath();
   planetContext.fill();
+  planetContext.fillStyle = '#DDDDDD';
+  for (var i = 0; i < 20; i++) {
+    var craterRadius = 10 + Math.random() * 20;
+
+    planetContext.beginPath();
+    planetContext.arc(centerX + Math.random() * Math.cos(i) * (planetRadius - craterRadius), centerY + Math.random() * Math.sin(i) * (planetRadius  - craterRadius), craterRadius, 0, Math.PI * 2);
+    planetContext.closePath();
+    planetContext.fill();
+  }
+
+  return planetContext.toSprite();
 }
 
 // planetContext.stroke();
 
 for (var i = 0; i < 20; i++) {
+  var planetRadius = 200;
   var scale = 0.2 + Math.random() * 0.3; // 40 + Math.random() * 60; 
-  var planetSprite = planetContext.toSprite();
+  var planetSprite = generatePlanetSprite(planetRadius);
   planetSprite.scale.set(scale, scale);
   var radius = planetRadius * scale; //planetSprite.width / 2;
   var pos = getPlanetPosition(radius, 0);
