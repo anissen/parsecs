@@ -40,49 +40,7 @@ tilingSprite.scale.set(0.5);
 tilingSprite.alpha = 0.7;
 parsecs.getLayer().addChild(tilingSprite);
 
-/*
-var starContext = parsecs.getNewContext(128, 128);
-var gradient = starContext.createRadialGradient(64, 64, 64, 64, 64, 0);
-gradient.addColorStop(0, rgba(1, 1, 1, 0));
-gradient.addColorStop(1, rgba(0, 0, 0, 1));
-
-// context.strokeStyle = "#000000";
-// starContext.fillStyle = '#000000';
-starContext.fillStyle = gradient;
-starContext.beginPath();
-starContext.arc(64, 64, 64, 0, 2 * Math.PI);
-starContext.closePath();
-starContext.fill();
-// starContext.stroke();
-
-
-for (var i = 0; i < 1000; i++) {
-  var x = Math.random() * world.width; 
-  var y = Math.random() * world.height; 
-  var scale = 0.2 + Math.random() * 0.8;
-  var alpha = Math.random() * 0.3;
-
-  var starSprite = starContext.toSprite();
-  starSprite.scale.set(scale, scale);
-  parsecs.getLayer().addChild(starSprite);
-  starSprite.position.set(x, y);
-  starSprite.alpha = alpha;
-
-  world.entities.push({
-    position: {
-      x: x,
-      y: y,
-      rotation: 0
-    },
-    sprite: {
-      sprite: starSprite
-    }
-  });
-}
-*/
-
 var planets = [];
-
 function getPlanetPosition(radius, minDist) {
   while (true) {
     var pos = {
@@ -147,7 +105,6 @@ for (var i = 0; i < 20; i++) {
   textSprite.anchor.set(0.5, 0.5);
   textSprite.position.x = pos.x;
   textSprite.position.y = pos.y; // - (radius * 1.2) - textSprite.height / 2;
-  // textSprite.visible = false;
   textSprite.alpha = 0;
   parsecs.getLayer().addChild(textSprite);
   parsecs.getLayer().addChild(planetSprite);
@@ -158,12 +115,10 @@ for (var i = 0; i < 20; i++) {
     planetSprite.mouseover = function() {
       TweenLite.to(textSprite, 1, { y: this.position.y - scale * 120 - textSprite.height / 2 /* TODO: Fix this value */, alpha: 1, ease: Elastic.easeOut });
       TweenLite.to(this.scale, 0.5, { x: scale * 1.2, y: scale * 1.2, ease: Elastic.easeOut });
-      // textSprite.visible = true;
     };
     planetSprite.mouseout = function() {
       TweenLite.to(textSprite, 1, { y: this.position.y, alpha: 0, ease: Elastic.easeIn });
       TweenLite.to(this.scale, 0.5, { x: scale, y: scale, ease: Elastic.easeInOut });
-      // textSprite.visible = false;
     };
     planetSprite.click = function() {
       console.log('planet click');
@@ -286,14 +241,8 @@ var cursorEntity = {
   },
   sprite: {
     sprite: cursorSprite
-  }/*
-  circle: {
-    color: 0x00FF33,
-    alpha: 1,
-    radius: 10
-  }*/
+  }
 };
-// world.entities.push(cursorEntity);
 
 var camera = parsecs.getCamera();
 
@@ -343,10 +292,6 @@ parsecs.on('mousedown', function(pos) {
   TweenLite.to(cursorEntity.sprite.sprite.scale, 0.3, { x: 0.3, y: 0.3, ease: Bounce.easeOut });
 });
 
-parsecs.on('mousemove', function(pos) {
-
-});
-
 parsecs.on('mousewheel', function(evt) {
   TweenLite.to(camera, 0.2, { zoom: clamp(camera.zoom + evt.zoom, 0.5, 8) });
 });
@@ -355,10 +300,6 @@ function clamp(value, min, max) {
   return Math.min(Math.max(min, value), max);
 }
 
-parsecs.on('mousedrag', function(evt) {
-
-});
-
 parsecs.run();
 
 // Expose for testing
@@ -366,23 +307,3 @@ window.parsecs = parsecs;
 
 // TODO: Only run GSAP on each frame
 
-
-
-
-/*
-function dot(prop, obj) { return obj[prop]; }
-var dotCircle = dot.bind(null, 'circle');
-
-var tl = new TimelineLite();
-tl
-  .staggerFrom(planets.map(dotCircle), 2, { radius: 0, ease: Elastic.easeOut }, 0.1);
-*/
-
-// var delay = require('./zoomPromise').Delay;
-// delay(2000, 200)
-//   .progressed(function(prog) { 
-//     console.log('Progress:', prog);
-//   })
-//   .then(function(msg) { 
-//     console.log('Done! Msg:', msg);
-//   });
