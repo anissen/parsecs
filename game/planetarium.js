@@ -193,23 +193,12 @@ for (var i = 0; i < 20; i++) {
   world.entities.push(planet);
 }
 
-var context = parsecs.getNewContext(128, 128);
-var shipCenterX = 64;
-var shipCenterY = 64;
-context.fillStyle = '#AA7744';
-context.beginPath();
-context.arc(shipCenterX, shipCenterY - 16, 32, 0, 2 * Math.PI);
-context.fill();
-context.fillRect(shipCenterX - 32, shipCenterY - 16, 64, 64);
-context.fillStyle = '#996633';
-context.fillRect(shipCenterX - 32 - 8, shipCenterY + 28, 16, 32);
-context.fillRect(shipCenterX + 32 - 8, shipCenterY + 28, 16, 32);
-
-var shipSprite = context.toSprite();
-shipSprite.anchor.set(0.5, 0.5);
-// shipSprite.pivot.set(0.5, 0.5);
-shipSprite.scale.set(0.3, 0.3);
-parsecs.getLayer().addChild(shipSprite);
+var spaceshipTexture = PIXI.Texture.fromImage('./assets/spaceship.png');
+var spaceshipSprite = new PIXI.Sprite(spaceshipTexture);
+spaceshipSprite.anchor.set(0.5, 0.5);
+// spaceshipSprite.pivot.set(0.5, 0.5);
+spaceshipSprite.scale.set(0.1);
+parsecs.getLayer().addChild(spaceshipSprite);
 
 var shipEntity = { 
   position: {
@@ -223,7 +212,7 @@ var shipEntity = {
     drotation: 0
   },
   sprite: {
-    sprite: shipSprite
+    sprite: spaceshipSprite
   }/*,
   emitter: {
     delay: 100,
@@ -262,7 +251,6 @@ var camera = parsecs.getCamera();
 
 // var lastShipPosX = shipEntity.position.x;
 // var lastShipPosY = shipEntity.position.y;
-
 var updateFunc = function(deltaTime) {
   systems.MotionSystem.tick(world.getEntities(), deltaTime);
   systems.EmitterSystem.tick(world.getEntities(), deltaTime);
