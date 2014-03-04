@@ -34,10 +34,10 @@ var rgba = function(r, g, b, a) {
   return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 };
 
-var texture = PIXI.Texture.fromImage('./assets/starfield9.jpg');
-var tilingSprite = new PIXI.TilingSprite(texture, world.width * 2, world.height * 2);
-tilingSprite.scale.set(0.5);
-tilingSprite.alpha = 0.7;
+var texture = PIXI.Texture.fromImage('./assets/starfield.png');
+var tilingSprite = new PIXI.TilingSprite(texture, world.width, world.height);
+// tilingSprite.scale.set(1);
+// tilingSprite.alpha = 0.7;
 parsecs.getLayer().addChild(tilingSprite);
 
 var planets = [];
@@ -66,17 +66,26 @@ function getPlanetPosition(radius, minDist) {
   }
 }
 
-var planetContext = parsecs.getNewContext(256, 256);
-// context.strokeStyle = "#000000";
+var starTexture = PIXI.Texture.fromImage('./assets/star.png');
+for (var i = 0; i < 200; i++) {
+  var starSprite = new PIXI.Sprite(starTexture);
+  starSprite.position.set(Math.random() * world.width, Math.random() * world.height);
+  starSprite.scale.set(0.1 + Math.random() * 0.3);
+  parsecs.getLayer().addChild(starSprite);
+}
+
+var planetContext = parsecs.getNewContext(512, 512);
+// planetContext.strokeStyle = '#CC6666';
+// planetContext.strokeWidth = 10;
 planetContext.fillStyle = '#FFFFFF';
 
-var planetRadius = 100;
+var planetRadius = 200;
 var bumpiness = 5;
 planetContext.beginPath();
+var centerX = 256;
+var centerY = 256;
 for (var i = 0; i < (2 * Math.PI); i += 0.1) {
-  var centerX = 128;
-  var centerY = 128;
-  var radius = planetRadius + Math.random() * bumpiness;
+  var radius = planetRadius; // + Math.random() * bumpiness;
   if (i === 0)
     planetContext.moveTo(centerX + Math.cos(i) * radius, centerY + Math.sin(i) * radius);
   else
@@ -84,12 +93,20 @@ for (var i = 0; i < (2 * Math.PI); i += 0.1) {
 }
 planetContext.closePath();
 planetContext.fill();
+planetContext.fillStyle = '#DDDDDD';
+for (var i = 0; i < 20; i++) {
+  var craterRadius = 10 + Math.random() * 20;
+
+  planetContext.beginPath();
+  planetContext.arc(centerX + Math.random() * Math.cos(i) * (planetRadius - craterRadius), centerY + Math.random() * Math.sin(i) * (planetRadius  - craterRadius), craterRadius, 0, Math.PI * 2);
+  planetContext.closePath();
+  planetContext.fill();
+}
+
 // planetContext.stroke();
 
-
-
 for (var i = 0; i < 20; i++) {
-  var scale = 0.3 + Math.random() * 0.7; // 40 + Math.random() * 60; 
+  var scale = 0.2 + Math.random() * 0.3; // 40 + Math.random() * 60; 
   var planetSprite = planetContext.toSprite();
   planetSprite.scale.set(scale, scale);
   var radius = planetRadius * scale; //planetSprite.width / 2;
@@ -97,8 +114,7 @@ for (var i = 0; i < 20; i++) {
   planetSprite.position.set(pos.x, pos.y);
   planetSprite.anchor.set(0.5, 0.5);
   planetSprite.interactive = true;
-  // planetSprite.buttonMode = true;
-  planetSprite.tint = 0x000000;
+  planetSprite.tint = 0xCC9966;
   planetSprite.hitArea = new PIXI.Circle(0, 0, planetRadius);
 
   var textSprite = new PIXI.Text('Planet #' + (i + 1), {font: "bold italic 38px Arvo", fill: "white", align: "center", stroke: "black", strokeThickness: 5});
@@ -180,14 +196,12 @@ for (var i = 0; i < 20; i++) {
 var context = parsecs.getNewContext(128, 128);
 var shipCenterX = 64;
 var shipCenterY = 64;
-// context.fillStyle = 'red';
-// context.fillRect(0, 0, 128, 128);
-context.fillStyle = 'blue';
+context.fillStyle = '#AA7744';
 context.beginPath();
 context.arc(shipCenterX, shipCenterY - 16, 32, 0, 2 * Math.PI);
 context.fill();
 context.fillRect(shipCenterX - 32, shipCenterY - 16, 64, 64);
-context.fillStyle = 'darkblue';
+context.fillStyle = '#996633';
 context.fillRect(shipCenterX - 32 - 8, shipCenterY + 28, 16, 32);
 context.fillRect(shipCenterX + 32 - 8, shipCenterY + 28, 16, 32);
 
