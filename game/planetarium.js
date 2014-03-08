@@ -131,47 +131,6 @@ for (var i = 0; i < 20; i++) {
 
   var planetRotation = -0.0002 + Math.random() * 0.0004;
 
-  (function(scale, textSprite, planetRotation) {
-    planetSprite.mouseover = function() {
-      TweenLite.to(textSprite, 1, { y: this.position.y - scale * 120 - textSprite.height / 2 /* TODO: Fix this value */, alpha: 1, ease: Elastic.easeOut });
-      TweenLite.to(this.scale, 0.5, { x: scale * 1.2, y: scale * 1.2, ease: Elastic.easeOut });
-    };
-    planetSprite.mouseout = function() {
-      TweenLite.to(textSprite, 1, { y: this.position.y, alpha: 0, ease: Elastic.easeIn });
-      TweenLite.to(this.scale, 0.5, { x: scale, y: scale, ease: Elastic.easeInOut });
-    };
-    planetSprite.click = function() {
-      console.log('planet click');
-
-      // u = unit vector from planet to ship
-      // dest = planet.pos + u * radius
-
-      var distPlantToShip = Math.sqrt(Math.pow(shipEntity.position.x - this.position.x, 2) + Math.pow(shipEntity.position.y - this.position.y, 2));
-      var unitVector = { x: (shipEntity.position.x - this.position.x) / distPlantToShip, y: (shipEntity.position.y - this.position.y) / distPlantToShip };
-      var destination = { x: this.position.x + unitVector.x * scale * 200 /* TODO: Fix this value */, y: this.position.y + unitVector.y * scale * 200 /* TODO: Fix this value */ };
-      var dist = Math.sqrt(Math.pow(shipEntity.position.x - destination.x, 2) + Math.pow(shipEntity.position.y - destination.y, 2));
-
-      var me = this;
-      //TweenLite.to(shipEntity.position, dist / 100, { x: destination.x, y: destination.y, onComplete: function() { console.log('arrived at planet!'); } });
-      var tl = new TimelineLite({ onComplete: function() {
-        shipEntity.position.x = me.position.x;
-        shipEntity.position.y = me.position.y;
-        shipEntity.sprite.sprite.pivot.set(me.width);
-        shipEntity.motion.drotation = planetRotation;
-      } });
-
-      var travelTime = dist / 100;
-      tl
-        .to(shipEntity.position, travelTime, { x: destination.x, y: destination.y })
-        .to(camera, 5, { zoom: 3 }, '-=2')
-        .to(shipEntity.position, 2, { rotation: (Math.atan2(destination.y - shipEntity.position.y, destination.x - shipEntity.position.x) - Math.PI / 2) % (Math.PI * 2) }, '-=3')
-        .to(shipEntity.position, 2, { x: this.position.x + unitVector.x * scale * 120 /* TODO: Fix this value */, y: this.position.y + unitVector.y * scale * 120 });
-
-      cursorEntity.sprite.sprite.scale.set(2);
-      TweenLite.to(cursorEntity.sprite.sprite.scale, 0.3, { x: 0.3, y: 0.3, ease: Bounce.easeOut });
-    };
-  })(scale, textSprite, planetRotation);
-
   var planet = {
     position: {
       x: pos.x,
@@ -183,6 +142,7 @@ for (var i = 0; i < 20; i++) {
     },
     sprite: {
       sprite: planetSprite,
+      radius: radius
     },
     motion: {
       dx: 0,
@@ -194,7 +154,57 @@ for (var i = 0; i < 20; i++) {
     } */
   };
   planets.push(planet);
+
+  setupPlanetEvents(planetSprite, planet, textSprite);
+
   world.entities.push(planet);
+}
+
+function setupPlanetEvents(sprite, entity, textSprite) {
+  var radius = entity.sprite.radius;
+  var originalScale = sprite.scale.x;
+
+  sprite.mouseover = function() {
+    TweenLite.to(textSprite, 1, { y: sprite.position.y - radius * 1.2 - textSprite.height / 2, alpha: 1, ease: Elastic.easeOut });
+    TweenLite.to(sprite.scale, 0.5, { x: originalScale * 1.2, y: originalScale * 1.2, ease: Elastic.easeOut });
+  };
+
+  sprite.mouseout = function() {
+    TweenLite.to(textSprite, 1, { y: sprite.position.y, alpha: 0, ease: Elastic.easeIn });
+    TweenLite.to(sprite.scale, 0.5, { x: originalScale, y: originalScale, ease: Elastic.easeInOut });
+  };
+
+  sprite.click = function() {
+    // console.log('planet click');
+
+    var distPlantToShip = Math.sqrt(Math.pow(shipEntity.position.x - sprite.position.x, 2) + Math.pow(shipEntity.position.y - sprite.position.y, 2));
+    var unitVector = { 
+      x: (shipEntity.position.x - sprite.position.x) / distPlantToShip, 
+      y: (shipEntity.position.y - sprite.position.y) / distPlantToShip
+    };
+    var destination = { 
+      x: sprite.position.x + unitVector.x * radius * 2, 
+      y: sprite.position.y + unitVector.y * radius * 2 
+    };
+    var dist = Math.sqrt(Math.pow(shipEntity.position.x - destination.x, 2) + Math.pow(shipEntity.position.y - destination.y, 2));
+
+    var tl = new TimelineLite({ onComplete: function() {
+      shipEntity.misc.landed = true;
+      shipEntity.misc.landedOnPlanet = entity;
+      shipEntity.misc.startRotation = entity.position.rotation - Math.atan2(sprite.position.y - shipEntity.position.y, sprite.position.x - shipEntity.position.x);
+      shipEntity.motion.drotation = 0;
+    } });
+
+    var travelTime = dist / 100;
+    tl
+      .to(shipEntity.position, travelTime, { x: destination.x, y: destination.y })
+      .to(camera, 5, { zoom: 3 }, '-=2')
+      .to(shipEntity.position, 2, { rotation: (Math.atan2(destination.y - shipEntity.position.y, destination.x - shipEntity.position.x) - Math.PI / 2) % (Math.PI * 2) }, '-=3')
+      .to(shipEntity.position, 2, { x: this.position.x + unitVector.x * radius * 1.2 /* TODO: Fix this value */, y: this.position.y + unitVector.y * radius * 1.2 });
+
+    // cursorEntity.sprite.sprite.scale.set(2);
+    // TweenLite.to(cursorEntity.sprite.sprite.scale, 0.3, { x: 0.3, y: 0.3, ease: Bounce.easeOut });
+  };
 }
 
 var spaceshipTexture = PIXI.Texture.fromImage('./assets/spaceship.png');
@@ -217,7 +227,8 @@ var shipEntity = {
   },
   sprite: {
     sprite: spaceshipSprite
-  }/*,
+  },
+  misc: {}/*,
   emitter: {
     delay: 100,
     countDown: 100,
@@ -255,9 +266,18 @@ var camera = parsecs.getCamera();
 
 // var lastShipPosX = shipEntity.position.x;
 // var lastShipPosY = shipEntity.position.y;
+
 var updateFunc = function(deltaTime) {
   systems.MotionSystem.tick(world.getEntities(), deltaTime);
   systems.EmitterSystem.tick(world.getEntities(), deltaTime);
+
+  if (shipEntity.misc.landed) {
+    var planet = shipEntity.misc.landedOnPlanet;
+    var rot = planet.position.rotation - shipEntity.misc.startRotation;
+    shipEntity.position.rotation = rot - Math.PI / 2;
+    shipEntity.position.x = planet.position.x - Math.cos(rot) * planet.sprite.radius * 1.2;
+    shipEntity.position.y = planet.position.y - Math.sin(rot) * planet.sprite.radius * 1.2;
+  }
 
   // TODO: Make this into a component/system
   // if (shipEntity.landing !== true && (shipEntity.position.x !== lastShipPosX || shipEntity.position.y !== lastShipPosY)) {
